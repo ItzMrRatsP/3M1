@@ -1,0 +1,48 @@
+{
+    "name": "Gearwork's Framework",
+    "tree": {
+        "$className": "DataModel",
+
+        "ReplicatedStorage": {
+            "Packages": {
+                "$path": "Packages"
+            },
+
+            "Vendors": {
+                "$path": "Vendors"
+            },
+
+            "Client": {
+                "$path": "src/client"
+            },
+
+            "Assets": {
+                "$className": "Folder",
+                "$ignoreUnknownInstances": true
+            },
+
+            "$ignoreUnknownInstances": true,
+            "$path": "src/shared"
+        },
+
+        "ServerStorage": {
+            "Server": {
+                "$path": "src/server"
+            }
+        },
+
+        "ServerScriptService": {
+            "Server": {
+                "$path": "src/home/Server.server.lua"
+            }
+        },
+
+        "StarterPlayer": {
+            "StarterPlayerScripts": {
+                "Client": {
+                    "$path": "src/home/Client.client.lua"
+                }
+            }
+        }
+    }
+}

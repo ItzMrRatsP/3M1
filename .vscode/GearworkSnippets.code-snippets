@@ -1,0 +1,17 @@
+{	
+	"NewJob": {
+		"prefix": "newjob",
+		"body": [
+			"local ReplicatedStorage = game:GetService(\"ReplicatedStorage\")\nlocal Global = require(ReplicatedStorage.Global)\n\nlocal function $1()\n\nend\n\nreturn Global.Schedule:Add($1)"
+		],
+		
+		"description": "Creates new job for the Global"
+	},
+
+	"newTodo": {
+		"prefix": "todo",
+		"body": [
+			"--[[\n     @TODO: $1\n--]]"
+		]
+	}
+}

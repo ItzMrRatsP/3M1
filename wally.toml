@@ -1,0 +1,16 @@
+[package]
+name = "itzmrratsp/stateframework"
+version = "0.1.0"
+registry = "https://github.com/UpliftGames/wally-index"
+realm = "shared"
+
+[dependencies]
+
+Promise = "evaera/promise@4.0.0"
+Net = "sleitnick/net@0.2.0"
+Cmdr = "evaera/cmdr@1.12.0"
+Janitor = "howmanysmall/janitor@1.17.0"
+Fusion = "elttob/fusion@0.3.0"
+ProfileService = "surnautica/profileservice@1.0.0"
+LemonSignal = "data-oriented-house/lemonsignal@1.10.0"
+TableValue = "data-oriented-house/tablevalue@3.0.0"
