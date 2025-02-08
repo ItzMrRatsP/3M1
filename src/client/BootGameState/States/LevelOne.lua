@@ -11,19 +11,15 @@ return function(StateMachine)
 	local State = StateMachine:AddState(script.Name)
 	local janitor = Janitor.new()
 
-	function State:Start() 
+	function State:Start() end
 
+	function State:Enter()
+		ReplicatedStorage:SetAttribute("StartLoading", false)
 	end
 
-	function State:Enter() 
-	
-	end
+	function State:Update(dt) end
 
-	function State:Update(dt) 
-	end
+	function State:Exit() end
 
-	function State:Exit()
-	end
-	
 	return State
 end

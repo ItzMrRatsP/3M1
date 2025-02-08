@@ -3,31 +3,28 @@ local RunService = game:GetService("RunService")
 return function(StateMachine, Character)
 	local State = StateMachine:AddState(script.Name)
 
-	function State:Start() 
-		
+	function State:Start()
 		StateMachine:AddEvent({
 			Name = "IdleEvent",
 			ToState = StateMachine.Idle,
 			FromStates = {
-				StateMachine.Walk
+				StateMachine.Walk,
 			},
 			Condition = function()
-				if Character.Humanoid.MoveDirection.Magnitude < 0.1 then return true end
+				if Character.Humanoid.MoveDirection.Magnitude < 0.1 then
+					return true
+				end
 			end,
 		}, true)
-
 	end
 
-	function State:Enter() 
+	function State:Enter()
 		Character.WalkSpeed = 1
 	end
 
-	function State:Update(dt) 
-	end
+	function State:Update(dt) end
 
-	function State:Exit()
+	function State:Exit() end
 
-	end
-	
 	return State
 end

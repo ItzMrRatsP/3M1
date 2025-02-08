@@ -2,14 +2,17 @@ local ChangeHistoryService = game:GetService("ChangeHistoryService")
 local Players = game:GetService("Players")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Global = require(ReplicatedStorage.Global)
+local Net = require(ReplicatedStorage.Packages.Net)
+local SignalWrapper = require(ReplicatedStorage.Shared.SignalWrapper)
 
 local CharacterModule = require(script.Character)
 
 local LocalPlayer = Players.LocalPlayer
+local StateMachine = Global.StateMachine.newFromFolder(script.States)
+
+Global.SceneManager = StateMachine
 
 local function BootGameState()
-	local StateMachine = Global.StateMachine.newFromFolder(script.States)
-
 	local function CharacterRemoved(character)
 		if Global.Character then
 			Global.Character:Destroy()

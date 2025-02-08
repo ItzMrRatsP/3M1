@@ -5,9 +5,11 @@ local Lighting = game:GetService("Lighting")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
+local GameConfig = require(ReplicatedStorage.Global.Config.GameConfig)
 local Global = require(ReplicatedStorage.Global)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Promise = require(ReplicatedStorage.Packages.Promise)
+local SignalWrapper = require(ReplicatedStorage.Shared.SignalWrapper)
 
 local Assets = ReplicatedStorage:FindFirstChild("Assets")
 local Logo = Assets:FindFirstChild("Logo")
@@ -19,7 +21,7 @@ local OriginalLighting = {
 	EnvironmentDiffuseScale = Lighting.EnvironmentDiffuseScale,
 	EnvironmentSpecularScale = Lighting.EnvironmentSpecularScale,
 	Brightness = Lighting.Brightness,
-	ClockTime = Lighting.ClockTime
+	ClockTime = Lighting.ClockTime,
 }
 
 local function setBrightness(number: number, multi)
@@ -53,16 +55,13 @@ return function(StateMachine)
 	local State = StateMachine:AddState(script.Name)
 	local janitor = Janitor.new()
 
-	function State:Start() 
+	function State:Start() end
 
-	end
-
-	function State:Enter() 
+	function State:Enter()
 		Logo.Parent = workspace
 		ContentProvider:PreloadAsync(Logo:GetDescendants())
-	
+
 		Camera.CameraType = Enum.CameraType.Scriptable
-		print("Loaded")
 
 		-- Lighting settings
 		Lighting.Ambient = Color3.new(0, 0, 0)
@@ -70,11 +69,12 @@ return function(StateMachine)
 		Lighting.EnvironmentSpecularScale = 0
 		Lighting.Brightness = 0
 		Lighting.ClockTime = 1
-	
+
 		janitor:Add(function()
-			StateMachine:Transition(StateMachine.LevelOne)
+			SignalWrapper:Get("startState"):Fire(GameConfig.StartLevel)
+			ReplicatedStorage:SetAttribute("IntroFinished", true)
 		end)
-	
+
 		janitor
 			:AddPromise(Promise.try(function()
 				task.wait(1)
@@ -86,13 +86,20 @@ return function(StateMachine)
 				end)
 				:andThen(function()
 					task.wait(3)
+					ReplicatedStorage:SetAttribute(
+						"StartLoading",
+						false
+					)
+				end)
+				:andThen(function()
+					task.wait(2)
 					janitor:Cleanup()
 				end))
 			:catch(warn)
 	end
 
-	function State:Update(dt) 
-		local Sin = math.sin(tick() * 2.5) / 10	
+	function State:Update(dt)
+		local Sin = math.sin(tick() * 2.5) / 10
 		local Cos = math.cos(tick() * 2.5) / 10
 
 		Camera.CFrame = Logo:FindFirstChild("Camera", true).CFrame
@@ -103,10 +110,12 @@ return function(StateMachine)
 		Camera.CameraType = Enum.CameraType.Custom
 
 		Lighting.Ambient = OriginalLighting.Ambient
-		Lighting.EnvironmentDiffuseScale = OriginalLighting.EnvironmentDiffuseScale
-		Lighting.EnvironmentSpecularScale = OriginalLighting.EnvironmentSpecularScale
+		Lighting.EnvironmentDiffuseScale =
+			OriginalLighting.EnvironmentDiffuseScale
+		Lighting.EnvironmentSpecularScale =
+			OriginalLighting.EnvironmentSpecularScale
 		Lighting.Brightness = OriginalLighting.Brightness
 	end
-	
+
 	return State
 end
