@@ -9,6 +9,8 @@ local Character = require(ReplicatedStorage.Client.BootGameState.Character)
 local Global = require(ReplicatedStorage.Global)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 
+local SignalWrapper = require(ReplicatedStorage.Shared.SignalWrapper)
+
 local Camera = workspace.CurrentCamera
 
 local CameraCutsceneRig = ReplicatedStorage.Assets.Rigs.WakeupCutsceneRig
@@ -30,12 +32,12 @@ local function Setup()
 		task.wait()
 	until CameraCutsceneTrack.Length > 0
 	print("Working")
-	ReplicatedStorage:SetAttribute("StartLoading", false)
-
 	CameraCutsceneTrack.Looped = false
 	CameraCutsceneTrack:Play()
 
 	task.wait(0.5)
+
+	ReplicatedStorage:SetAttribute("StartLoading", false)
 	CameraCutsceneTrack.Stopped:Connect(function()
 		Connected = false
 		Global.Character.Root.AssemblyLinearVelocity = Vector3.zero
@@ -53,6 +55,7 @@ return function(StateMachine)
 		repeat
 			task.wait()
 		until Global.Character ~= nil
+		
 		Setup()
 	end
 
