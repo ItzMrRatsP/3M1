@@ -18,7 +18,7 @@ Levels.IndexedLevel = {
 Levels.Config = {
 	[Levels.OrderedIndex.Intermission] = {
 		Map = Maps:FindFirstChild("Intermission"),
-		HasEntrance = true,
+		HasEntrance = false,
 	},
 
 	[Levels.OrderedIndex.LevelOne] = {

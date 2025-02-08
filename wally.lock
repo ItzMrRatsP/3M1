@@ -35,11 +35,31 @@ dependencies = [["Promise", "evaera/promise@4.0.0"]]
 [[package]]
 name = "itzmrratsp/stateframework"
 version = "0.1.0"
-dependencies = [["Cmdr", "evaera/cmdr@1.12.0"], ["Fusion", "elttob/fusion@0.3.0"], ["Janitor", "howmanysmall/janitor@1.17.0"], ["LemonSignal", "data-oriented-house/lemonsignal@1.10.0"], ["Net", "sleitnick/net@0.2.0"], ["ProfileService", "surnautica/profileservice@1.0.0"], ["Promise", "evaera/promise@4.0.0"], ["TableValue", "data-oriented-house/tablevalue@3.0.0"]]
+dependencies = [["Cmdr", "evaera/cmdr@1.12.0"], ["Component", "sleitnick/component@2.4.8"], ["Fusion", "elttob/fusion@0.3.0"], ["Janitor", "howmanysmall/janitor@1.17.0"], ["LemonSignal", "data-oriented-house/lemonsignal@1.10.0"], ["Net", "sleitnick/net@0.2.0"], ["ProfileService", "surnautica/profileservice@1.0.0"], ["Promise", "evaera/promise@4.0.0"], ["TableValue", "data-oriented-house/tablevalue@3.0.0"]]
+
+[[package]]
+name = "sleitnick/component"
+version = "2.4.8"
+dependencies = [["Promise", "evaera/promise@4.0.0"], ["Signal", "sleitnick/signal@2.0.3"], ["Symbol", "sleitnick/symbol@2.0.1"], ["Trove", "sleitnick/trove@1.5.0"]]
 
 [[package]]
 name = "sleitnick/net"
 version = "0.2.0"
+dependencies = []
+
+[[package]]
+name = "sleitnick/signal"
+version = "2.0.3"
+dependencies = []
+
+[[package]]
+name = "sleitnick/symbol"
+version = "2.0.1"
+dependencies = []
+
+[[package]]
+name = "sleitnick/trove"
+version = "1.5.0"
 dependencies = []
 
 [[package]]

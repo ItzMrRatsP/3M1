@@ -18,19 +18,12 @@ local currentIndex = 1
 local Player = Players.LocalPlayer
 -- local function destroyPreviousLevel() end void
 
-local function switchGameState(Name)
-	if not Global.SceneManager[Name] then
-		return
-	end
-
-	Global.SceneManager:Transition(Global.SceneManager[Name])
-end
-
 local function OpenDoors() end
 
 local function generateEntrance()
 	-- todo: generate entrance for the current level
 	if not nextLevelSpawn then
+		warn("No next levelspawn, idk")
 		return
 	end
 
@@ -63,7 +56,6 @@ local function generateLevel()
 	currentLevel = janitor:Add(levelConfig.Map:Clone())
 	currentLevel.Parent = workspace
 
-
 	if levelConfig.HasEntrance then
 		print("Has entrance, create entrance for the room")
 		generateEntrance()
@@ -79,6 +71,7 @@ local function generateLevel()
 		end
 
 		currentLevel:PivotTo(Spawn:GetPivot())
+		nextLevelSpawn = currentLevel:FindFirstChild("NextLevelSpawn", true)
 	else
 		if not nextLevelSpawn then
 			warn("No next level spawn, possibly no next level exist.")
@@ -86,11 +79,10 @@ local function generateLevel()
 		end
 
 		-- Nothing to generate for next level
+
 		currentLevel:PivotTo(nextLevelSpawn:GetPivot())
+		nextLevelSpawn = currentLevel:FindFirstChild("NextLevelSpawn", true)
 	end
-
-	nextLevelSpawn = currentLevel:FindFirstChild("NextLevelSpawn", true)
-
 
 	if Player.Character then
 		if GameConfig.StartLevel == levelIndex then
@@ -116,4 +108,3 @@ return Global.Schedule:Add(function()
 	SignalWrapper:Get("generateLevel"):Connect(generateLevel)
 	generateLevel() -- Intermission level
 end)
-
