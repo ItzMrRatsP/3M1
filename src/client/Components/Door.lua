@@ -62,17 +62,15 @@ function DoorComponent:OpenDoor(side1, side2)
 		side1,
 		tweenInfo,
 		{
-			CFrame = CFrame.new(
-				self.OriginalPositions.Side1 + Vector3.new(-3, 0, 0)
-			),
+			CFrame = (CFrame.new(self.OriginalPositions.Side1) * CFrame.new(-3, 0, 0)),
 		}
 	) -- Move left
 	local tweenSide2 = TweenService:Create(
 		side2,
 		tweenInfo,
 		{
-			CFrame = CFrame.new(
-				self.OriginalPositions.Side2 + Vector3.new(3, 0, 0)
+			(CFrame = CFrame.new(
+				self.OriginalPositions.Side2) * CFrame.new(3, 0, 0)
 			),
 		}
 	) -- Move right
