@@ -6,4 +6,5 @@ return {
 	GameUtil = require(script.Util.GameUtil),
 	StateMachine = require(script.Util.StateMachine),
 	Schedule = require(script.Schedule),
+	Character = nil,
 }
