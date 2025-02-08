@@ -58,22 +58,16 @@ end
 function DoorComponent:OpenDoor(side1, side2)
 	print("Opening door")
 
-	local tweenSide1 = TweenService:Create(
-		side1,
-		tweenInfo,
-		{
-			CFrame = (CFrame.new(self.OriginalPositions.Side1) * CFrame.new(-3, 0, 0)),
-		}
-	) -- Move left
-	local tweenSide2 = TweenService:Create(
-		side2,
-		tweenInfo,
-		{
-			(CFrame = CFrame.new(
-				self.OriginalPositions.Side2) * CFrame.new(3, 0, 0)
-			),
-		}
-	) -- Move right
+	local tweenSide1 = TweenService:Create(side1, tweenInfo, {
+		CFrame = (
+			CFrame.new(self.OriginalPositions.Side1)
+			* CFrame.new(-3, 0, 0)
+		),
+	}) -- Move left
+	local tweenSide2 = TweenService:Create(side2, tweenInfo, {
+		CFrame = CFrame.new(self.OriginalPositions.Side2)
+			* CFrame.new(3, 0, 0),
+	}) -- Move right
 
 	tweenSide1:Play()
 	tweenSide2:Play()
