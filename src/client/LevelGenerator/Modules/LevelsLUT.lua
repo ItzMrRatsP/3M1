@@ -18,15 +18,17 @@ Levels.IndexedLevel = {
 Levels.Config = {
 	[Levels.OrderedIndex.Intermission] = {
 		Map = Maps:FindFirstChild("Intermission"),
-		-- Add more configs
+		HasEntrance = true,
 	},
 
 	[Levels.OrderedIndex.LevelOne] = {
 		Map = Maps:FindFirstChild("LevelOne"),
+		HasEntrance = true,
 	},
 } :: {
 	[number]: {
 		Map: Folder,
+		HasEntrance: boolean, -- Checks if it have entrance or not
 	},
 }
 

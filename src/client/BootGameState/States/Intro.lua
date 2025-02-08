@@ -71,8 +71,8 @@ return function(StateMachine)
 		Lighting.ClockTime = 1
 
 		janitor:Add(function()
-			SignalWrapper:Get("startState"):Fire(GameConfig.StartLevel)
 			ReplicatedStorage:SetAttribute("IntroFinished", true)
+			Camera.CameraType = Enum.CameraType.Custom
 		end)
 
 		janitor
@@ -83,13 +83,6 @@ return function(StateMachine)
 				:andThen(function()
 					task.wait(4)
 					setBrightness(0, 0.5)
-				end)
-				:andThen(function()
-					task.wait(3)
-					ReplicatedStorage:SetAttribute(
-						"StartLoading",
-						true
-					)
 				end)
 				:andThen(function()
 					task.wait(2)

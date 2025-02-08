@@ -6,12 +6,17 @@ local Global = require(ReplicatedStorage.Global)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local LevelsLUT =
 	require(ReplicatedStorage.Client.LevelGenerator.Modules.LevelsLUT)
-local Promise = require(ReplicatedStorage.Packages.Promise)
 local SignalWrapper = require(ReplicatedStorage.Shared.SignalWrapper)
 
+-- This will help us keep track of the previous level
 local janitor = Janitor.new()
-local LocalPlayer = Players.LocalPlayer
-local Index = 1
+local currentLevel = nil
+local nextLevelSpawn = nil
+local currentIndex = 1
+
+-- Variables
+local Player = Players.LocalPlayer
+-- local function destroyPreviousLevel() end void
 
 local function switchGameState(Name)
 	if not Global.SceneManager[Name] then
@@ -21,75 +26,119 @@ local function switchGameState(Name)
 	Global.SceneManager:Transition(Global.SceneManager[Name])
 end
 
-local function addLoading(levelIndex)
-	janitor
-		:AddPromise(Promise.try(function()
-			ReplicatedStorage:SetAttribute("StartLoading", true)
-			return Promise.delay(2)
-		end):andThen(function()
-			switchGameState(levelIndex)
-		end))
-		:catch(warn)
+local function OpenDoors() end
+
+local function generateEntrance()
+	-- todo: generate entrance for the current level
+	if not nextLevelSpawn then
+		return
+	end
+
+	local entrance = janitor:Add(
+		ReplicatedStorage.Assets:FindFirstChild("Entrance", true):Clone()
+	)
+
+	entrance:PivotTo(nextLevelSpawn:GetPivot())
+	entrance.Parent = workspace
+
+	nextLevelSpawn = entrance:FindFirstChild("NextLevelSpawn")
 end
 
-local function generateNextLevel()
-	local levelIndex = LevelsLUT.IndexedLevel[Index]
+local function generateLevel()
+	-- todo: generate the levels passivly
+	print("Called")
+	local levelIndex = LevelsLUT.IndexedLevel[currentIndex]
 
-	-- Level doesn't exist, close off the script
 	if not levelIndex then
+		warn("No level index")
 		return
 	end
 
 	local levelConfig = LevelsLUT.Config[LevelsLUT.OrderedIndex[levelIndex]]
 
-	-- Level config doesn't exist, which means level haven't been added yet
 	if not levelConfig then
-		warn("Level Config doesn't exist")
+		warn("No level config")
 		return
 	end
 
-	janitor:Cleanup() -- Cleanup before doing new stuff
-	janitor:Add(function()
-		ReplicatedStorage:SetAttribute("StartLoading", true)
-	end)
+	print("Creating Level")
 
-	local map = janitor:Add(levelConfig.Map:Clone())
-	map.Parent = workspace
+	currentLevel = janitor:Add(levelConfig.Map:Clone())
+	currentLevel.Parent = workspace
 
-	print("Level generated, Next task is to tp all players")
-
-	local mapSpawn = map:FindFirstChild("Spawn", true)
-
-
-	if LocalPlayer.Character then
-		LocalPlayer.Character:PivotTo(mapSpawn.CFrame)
+	if levelConfig.HasEntrance then
+		print("Has entrance, create entrance for the room")
+		generateEntrance()
 	end
-	
-	janitor:Add(LocalPlayer.CharacterAdded:Connect(function(Character)
-		print("pivoted")
-		Character:PivotTo(mapSpawn.CFrame)
+
+	-- Set the CFrame of the level
+	if GameConfig.StartLevel == levelIndex then
+		local Spawn = workspace:FindFirstChild("LevelSpawn")
+
+		if not Spawn then
+			warn("No spawn")
+			return
+		end
+
+		currentLevel:PivotTo(Spawn:GetPivot())
+	else
+		if not nextLevelSpawn then
+			warn("No next level spawn, possibly no next level exist.")
+			return
+		end
+
+		-- Nothing to generate for next level
+		currentLevel:PivotTo(nextLevelSpawn:GetPivot())
+	end
+
+	nextLevelSpawn = currentLevel:FindFirstChild("NextLevelSpawn", true)
+
+	if Player.Character then
+		if GameConfig.StartLevel == levelIndex then
+			Player.Character:PivotTo(
+				currentLevel:FindFirstChild("Spawn", true).CFrame
+			)
+		end
+	end
+
+	janitor:Add(Player.CharacterAdded:Connect(function(Char)
+		if GameConfig.StartLevel == levelIndex then
+			Char:PivotTo(
+				currentLevel:FindFirstChild("Spawn", true).CFrame
+			)
+		end
 	end))
 
+	-- Switch the state
 	if not ReplicatedStorage:GetAttribute("IntroFinished") then
-		janitor:Add(
-			ReplicatedStorage:GetAttributeChangedSignal("IntroFinished")
-				:Connect(function()
-					-- Finished
-					addLoading(levelIndex)
-				end)
-		)
+		ReplicatedStorage:SetAttribute("StartLoading", true)
+		print("SetLoading")
+		ReplicatedStorage:GetAttributeChangedSignal("IntroFinished")
+			:Once(function()
+				switchGameState(levelIndex)
+			end)
 	else
-		addLoading(Index)
+		ReplicatedStorage:SetAttribute("StartLoading", true)
+		print("SetLoading2")
+		switchGameState(levelIndex)
 	end
 
-	-- Set the index to the next index
-	Index += 1
+	-- Move to the next index
+	currentIndex += 1
 end
 
-local function boot()
-	-- TODO: Generate Level on Signal
-	SignalWrapper:Load("generateNextLevel", generateNextLevel)
-	generateNextLevel()
-end
+return Global.Schedule:Add(function()
+	SignalWrapper:Load("generateLevel", generateLevel)
 
-return Global.Schedule:Add(boot)
+	-- Remove the previous room upon entering the next room
+	-- SignalWrapper:Load("removePreviousRoom", function()
+	-- 	janitor:Cleanup()
+	-- end)
+
+	generateLevel() -- Intermission level
+
+	task.delay(15, function()
+		print("Generate another level")
+		generateLevel()
+	end)
+end)

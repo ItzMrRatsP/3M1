@@ -13,9 +13,7 @@ return function(StateMachine)
 
 	function State:Start() end
 
-	function State:Enter()
-		ReplicatedStorage:SetAttribute("StartLoading", false)
-	end
+	function State:Enter() end
 
 	function State:Update(dt) end
 

@@ -26,8 +26,7 @@ function Signals:Remove(Name: string): ()
 	self.ActiveSignals[Name] = nil
 end
 
-function Signals:Load(Name: string, Callback
-): LemonSignal.Connection<...any>
+function Signals:Load(Name: string, Callback): LemonSignal.Connection<...any>
 	if self.ActiveSignals[Name] then
 		return self.ActiveSignals[Name]:Connect(Callback)
 	end
