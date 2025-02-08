@@ -3,6 +3,8 @@ local ReplicatedFirst = game:GetService("ReplicatedFirst")
 local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
 
+local UserInputService = game:GetService("UserInputService")
+
 local Shared = ReplicatedStorage:WaitForChild("Shared")
 local Client = ReplicatedStorage:WaitForChild("Client")
 local Packages = ReplicatedStorage:WaitForChild("Packages")
@@ -11,6 +13,7 @@ local Assets = ReplicatedStorage:WaitForChild("Assets")
 local Janitor = require(Packages.Janitor)
 local Global = require(ReplicatedStorage.Global)
 local CameraHandlerModule = require(script.CameraHandler)
+local PhysicsGrabModule = require(script.PhysicsGrabHandler)
 
 local Camera = workspace.CurrentCamera
 
@@ -43,6 +46,7 @@ function Character.new(CharacterInstance)
 	self.Janitor = Janitor.new()
 
 	local CameraHandler = CameraHandlerModule.new(self)
+	self.PhysicsGrabHandler = PhysicsGrabModule.new(self)
 
 	CameraHandler:Enable()
 	for _, Part in self.CharacterInstance:GetDescendants() do
@@ -58,6 +62,24 @@ function Character.new(CharacterInstance)
 
 	self.MovementStateMachine:Start(self.MovementStateMachine.Idle)
 
+	self.Janitor:Add(UserInputService.InputBegan:Connect(function(Input, GameProccessed)
+
+		if Input.KeyCode == Enum.KeyCode.E then
+			print("Input Sent")
+			if self.PhysicsGrabHandler:IsGrabbing() then
+				self.PhysicsGrabHandler:Unhold()
+				return
+			end
+			local Object : BasePart = self.PhysicsGrabHandler:CheckForObjects()
+			print(Object)
+			if Object and Object:HasTag("Grabbable") then
+				
+				self.PhysicsGrabHandler:Hold(Object)
+			end
+		end
+
+	end))
+
 	self.Janitor:Add(RunService.RenderStepped:Connect(function(dt)
 		self:Update(dt)
 	end))
@@ -67,6 +89,7 @@ end
 
 function Character:Update(DT)
     self.Humanoid.WalkSpeed = self.WalkSpeed
+	self.PhysicsGrabHandler:Update()
 end
 
 function Character:Destroy()
