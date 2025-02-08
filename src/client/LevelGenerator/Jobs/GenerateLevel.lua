@@ -10,7 +10,7 @@ local Promise = require(ReplicatedStorage.Packages.Promise)
 local SignalWrapper = require(ReplicatedStorage.Shared.SignalWrapper)
 
 local janitor = Janitor.new()
-
+local LocalPlayer = Players.LocalPlayer
 local Index = 1
 
 local function switchGameState(Name)
@@ -60,21 +60,14 @@ local function generateNextLevel()
 
 	local mapSpawn = map:FindFirstChild("Spawn", true)
 
-	-- Tp all players to the intermission
-	for _, player in Players:GetPlayers() do
-		-- So we won't change player position
-		if not player.Character then
-			warn("Player has no Character")
-			continue
-		end
 
-		player.Character:PivotTo(mapSpawn.CFrame)
+	if LocalPlayer.Character then
+		LocalPlayer.Character:PivotTo(mapSpawn.CFrame)
 	end
-
-	janitor:Add(Players.PlayerAdded:Connect(function(Player)
-		janitor:Add(Player.CharacterAdded:Connect(function(Character)
-			Character:PivotTo(mapSpawn.CFrame)
-		end))
+	
+	janitor:Add(LocalPlayer.CharacterAdded:Connect(function(Character)
+		print("pivoted")
+		Character:PivotTo(mapSpawn.CFrame)
 	end))
 
 	if not ReplicatedStorage:GetAttribute("IntroFinished") then

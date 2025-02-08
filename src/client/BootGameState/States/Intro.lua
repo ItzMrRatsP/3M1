@@ -88,7 +88,7 @@ return function(StateMachine)
 					task.wait(3)
 					ReplicatedStorage:SetAttribute(
 						"StartLoading",
-						false
+						true
 					)
 				end)
 				:andThen(function()

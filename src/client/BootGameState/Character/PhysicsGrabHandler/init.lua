@@ -29,7 +29,7 @@ function PhysicsGrab.new(Character)
 	self.Attachment1.Parent = self.CameraPart
 	self.Head = self.Character:WaitForChild("Head")
 	self.AlignPosition.Attachment1 = self.Attachment1
-	self.AlignPosition.MaxForce = math.huge
+	self.AlignPosition.MaxForce = 30000
 	self.AlignPosition.Responsiveness = 30
 	self.AlignOrientation.Mode = Enum.OrientationAlignmentMode.OneAttachment
 
@@ -89,7 +89,7 @@ function PhysicsGrab:CheckForObjects()
 end
 
 function PhysicsGrab:Update(dt)
-	self.CameraPart.Position = Camera.CFrame.LookVector * 4
+	self.CameraPart.Position = Camera.CFrame.LookVector * 6
 		+ self.Head.Position
 	self.CameraPart.Orientation = self.CameraPart.Orientation
 	if not self.Grabbed then

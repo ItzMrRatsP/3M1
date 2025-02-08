@@ -16,12 +16,14 @@ local CameraCutsceneAnimation =
 return function(StateMachine)
 	local State = StateMachine:AddState(script.Name)
 	local janitor = Janitor.new()
+	local Connected = true
 
 	function State:Start() end
 
 	function State:Enter()
 		CameraCutsceneRig.Parent = workspace
-		CameraCutsceneRig:PivotTo(Global.Character.Root.CFrame)
+		Global.Character.Root.Anchored = true
+		CameraCutsceneRig:PivotTo(Global.Character.Root.CFrame * CFrame.new(0,-2,-0.2))
 		local CameraCutsceneTrack: AnimationTrack =
 			CameraCutsceneRig.Humanoid:LoadAnimation(
 				CameraCutsceneAnimation
@@ -36,10 +38,18 @@ return function(StateMachine)
 
 		task.wait(0.5)
 		ReplicatedStorage:SetAttribute("StartLoading", false)
+		CameraCutsceneTrack.Stopped:Connect(function()
+			Connected = false
+			Global.Character.Root.AssemblyLinearVelocity = Vector3.zero
+			Global.Character.Root.Anchored = false
+		end)
 	end
 
 	function State:Update(dt)
-		Camera.CFrame = CameraCutsceneRig.Torso.CFrame
+		if Connected then
+			CameraCutsceneRig.Torso.CanCollide = false
+			Camera.CFrame = CameraCutsceneRig.Torso.CFrame
+		end
 	end
 
 	function State:Exit() end
