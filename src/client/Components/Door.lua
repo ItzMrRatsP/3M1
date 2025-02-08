@@ -5,6 +5,7 @@ local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 
 local Component = require(ReplicatedStorage.Packages.Component)
+local Global = require(ReplicatedStorage.Global)
 
 local DoorComponent = Component.new {
 	Tag = "Door",
@@ -65,6 +66,7 @@ function DoorComponent:Start()
 		if distance < 10 and not self.isOpen then
 			self.isOpen = true
 			self:OpenDoor(side1, side2)
+			Global.GameUtil.playSound("Door")
 		elseif distance > 12 and self.isOpen then
 			self.isOpen = false
 			self:CloseDoor(side1, side2)
@@ -76,14 +78,10 @@ function DoorComponent:OpenDoor(side1, side2)
 	print("Opening door")
 
 	local tweenSide1 = TweenService:Create(side1, tweenInfo, {
-		CFrame = (
-			CFrame.new(self.OriginalPositions.Side1)
-			* CFrame.new(-3, 0, 0)
-		),
+		C0 = (self.OriginalPositions.Side1 * CFrame.new(0, 0, -4)),
 	}) -- Move left
 	local tweenSide2 = TweenService:Create(side2, tweenInfo, {
-		CFrame = CFrame.new(self.OriginalPositions.Side2)
-			* CFrame.new(3, 0, 0),
+		C0 = (self.OriginalPositions.Side2 * CFrame.new(0, 0, 4)),
 	}) -- Move right
 
 	tweenSide1:Play()

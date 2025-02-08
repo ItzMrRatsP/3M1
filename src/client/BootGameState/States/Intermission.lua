@@ -8,6 +8,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Character = require(ReplicatedStorage.Client.BootGameState.Character)
 local Global = require(ReplicatedStorage.Global)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
+local Subtitles = require(ReplicatedStorage.Client.Subtitles)
 
 local SignalWrapper = require(ReplicatedStorage.Shared.SignalWrapper)
 
@@ -23,8 +24,11 @@ local function Setup()
 	CameraCutsceneRig.Parent = workspace
 	Global.Character.Root.Anchored = true
 	CameraCutsceneRig:PivotTo(
-		Global.Character.Root.CFrame * CFrame.new(0, -2, -0.2)
+		Global.Character.Root.CFrame
+			* CFrame.new(0, -2, -0.2)
+			* CFrame.Angles(0, math.rad(180), 0)
 	)
+
 	local CameraCutsceneTrack: AnimationTrack =
 		CameraCutsceneRig.Humanoid:LoadAnimation(CameraCutsceneAnimation)
 
@@ -55,7 +59,8 @@ return function(StateMachine)
 		repeat
 			task.wait()
 		until Global.Character ~= nil
-		
+
+		Subtitles.playSubtitle("Intro")
 		Setup()
 	end
 

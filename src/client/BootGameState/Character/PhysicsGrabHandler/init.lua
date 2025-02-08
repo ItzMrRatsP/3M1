@@ -1,6 +1,11 @@
+local ContextActionService = game:GetService("ContextActionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local Global = require(ReplicatedStorage.Global)
+local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Camera = workspace.CurrentCamera
+
+local janitor = Janitor.new()
 
 local PhysicsGrab = {}
 PhysicsGrab.__index = PhysicsGrab
@@ -58,6 +63,7 @@ function PhysicsGrab:Hold(object)
 	if not object then
 		return
 	end
+
 	local model = false
 
 	if model then
@@ -72,6 +78,32 @@ function PhysicsGrab:Hold(object)
 	self.AlignOrientation.Attachment0 = self.Attachment0
 	self.Grabbed = object
 	self.AlignPosition.Attachment1 = self.Attachment1
+
+	print("Grabbing")
+
+	janitor:Add(function()
+		self:Unhold()
+		ContextActionService:UnbindAction("holdPhysic")
+	end)
+
+	ContextActionService:BindAction("holdPhysic", function(_, State)
+		if State ~= Enum.UserInputState.Begin then
+			return
+		end
+
+		janitor:Cleanup()
+
+		local Attachment = Instance.new("Attachment")
+		Attachment.Parent = object
+
+		local Force = Instance.new("VectorForce")
+		Force.Attachment0 = Attachment
+		Force.Force = -self.CameraPart.CFrame.LookVector * 10000
+		Force.Parent = object
+
+		Global.GameUtil.Destroy(0.35, Attachment)
+		Global.GameUtil.Destroy(0.35, Force)
+	end, true, Enum.UserInputType.MouseButton1)
 end
 
 function PhysicsGrab:CheckForObjects()
@@ -92,9 +124,11 @@ function PhysicsGrab:Update(dt)
 	self.CameraPart.Position = Camera.CFrame.LookVector * 6
 		+ self.Head.Position
 	self.CameraPart.Orientation = self.CameraPart.Orientation
+
 	if not self.Grabbed then
 		return
 	end
+
 	self.AlignOrientation.CFrame =
 		CFrame.lookAt(self.Grabbed.Position, self.Head.Position)
 end
