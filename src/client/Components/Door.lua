@@ -12,7 +12,8 @@ local DoorComponent = Component.new {
 }
 
 -- TWEEN SETTINGS
-local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
+local tweenInfo =
+	TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
 
 function DoorComponent:Construct()
 	print("Created")

@@ -129,7 +129,12 @@ function PhysicsGrab:Update(dt)
 		return
 	end
 
-	if (self.Grabbed.Position.Magnitude - self.CameraPart.Position.Magnitude) >= 8 then
+	if
+		(
+			self.Grabbed.Position.Magnitude
+			- self.CameraPart.Position.Magnitude
+		) >= 8
+	then
 		self:Unhold()
 		return
 	end
@@ -146,6 +151,7 @@ function PhysicsGrab:Unhold()
 	end
 	--PhysicsGrab:EnabledCollision(self.Grabbed)
 	self.Grabbed = nil
+	janitor:Cleanup()
 end
 
 function PhysicsGrab:Start()
