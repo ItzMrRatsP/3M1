@@ -18,7 +18,8 @@ function WallPiston:Start()
 	self.BasePart = self.Instance:WaitForChild("Main")
 	self.BasePosition = self.BasePart.Position
 
-	self.EndPos = self.Instance.Path.EndPos.Position
+	self.EndPos =
+		self.Instance:WaitForChild("Path"):WaitForChild("EndPos").Position
 
 	self.Instance:GetAttributeChangedSignal("Active"):Connect(function()
 		if self.Instance:GetAttribute("Active") then

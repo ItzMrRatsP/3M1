@@ -167,7 +167,7 @@ function GameUtil.getWeighted(weights, prizes)
 end
 
 function GameUtil.playSound(name: string)
-	local sound = ReplicatedStorage.Assets:FindFirstChild(name, true)
+	local sound = ReplicatedStorage.Assets.Sounds:FindFirstChild(name, true)
 
 	if not sound then
 		return

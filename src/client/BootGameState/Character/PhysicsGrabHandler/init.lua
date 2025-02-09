@@ -1,14 +1,38 @@
 local ContextActionService = game:GetService("ContextActionService")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
+local Fusion = require(ReplicatedStorage.Packages.Fusion)
 local Global = require(ReplicatedStorage.Global)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Camera = workspace.CurrentCamera
 
 local janitor = Janitor.new()
+local Scoped = Fusion.scoped(Fusion)
 
 local PhysicsGrab = {}
 PhysicsGrab.__index = PhysicsGrab
+
+local function newBeam(Attachment0, Attachment1)
+	return Scoped:New("Beam") {
+		Name = "Beam",
+		LightEmission = 1,
+		LightInfluence = 1,
+		Texture = "rbxassetid://5889875399",
+		TextureLength = 0.1,
+		Transparency = NumberSequence.new {
+			NumberSequenceKeypoint.new(0, 0),
+			NumberSequenceKeypoint.new(1, 1),
+		},
+
+		Attachment0 = Attachment0,
+		Attachment1 = Attachment1,
+
+		Width0 = 4,
+		Width1 = 4,
+
+		Parent = Attachment0,
+	}
+end
 
 function PhysicsGrab.new(Character)
 	local self = {}
@@ -60,6 +84,7 @@ function PhysicsGrab:Hold(object)
 		self:Unhold()
 		return
 	end
+
 	if not object then
 		return
 	end
@@ -79,7 +104,10 @@ function PhysicsGrab:Hold(object)
 	self.Grabbed = object
 	self.AlignPosition.Attachment1 = self.Attachment1
 
-	print("Grabbing")
+	local headAttachment = janitor:Add(Instance.new("Attachment"))
+	headAttachment.Parent = self.Character:FindFirstChild("Head")
+
+	janitor:Add(newBeam(headAttachment, self.Attachment0))
 
 	janitor:Add(function()
 		self:Unhold()

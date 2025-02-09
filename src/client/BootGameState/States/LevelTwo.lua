@@ -15,10 +15,22 @@ return function(StateMachine)
 	local janitor = Janitor.new()
 
 	function State:Enter()
-		SignalWrapper:Get("generateLevel"):Fire()
-		ActiveMap["LevelTwo"].Assets.SlidingDoorEntry:SetAttribute(
+		ActiveMap["LevelTwo"].Assets.SlidingDoorENTRY:SetAttribute(
 			"Locked",
 			true
+		)
+
+		SignalWrapper:Get("generateLevel"):Fire()
+
+		local zone =
+			Zones.new(ActiveMap["LevelThree"]:FindFirstChild("EntryZone"))
+
+		janitor:Add(
+			zone.playerEntered:Connect(function()
+				StateMachine:Transition(StateMachine.LevelThree)
+			end),
+
+			"Disconnect"
 		)
 	end
 
@@ -26,7 +38,9 @@ return function(StateMachine)
 
 	function State:Update() end
 
-	function State:Exit() end
+	function State:Exit()
+		janitor:Cleanup()
+	end
 
 	return State
 end

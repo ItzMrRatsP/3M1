@@ -4,6 +4,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 
+local Global = require(ReplicatedStorage.Global)
 local Zones = require(ReplicatedStorage.Shared.Zones)
 
 local Component = require(ReplicatedStorage.Packages.Component)
@@ -34,6 +35,8 @@ function PressureButton:Start()
 			tweenInfo,
 			{ Position = targetPosition }
 		)
+
+		Global.GameUtil.playSound("Button")
 		tween:Play()
 
 		self.Instance:SetAttribute("Active", true)
@@ -45,12 +48,20 @@ function PressureButton:Start()
 			tweenInfo,
 			{ Position = originalPosition }
 		)
+
 		tween:Play()
 
 		self.Instance:SetAttribute("Active", false)
 	end)
 
 	for _, obj in pairs(CollectionService:GetTagged("Heavy")) do
+		if
+			not obj:IsAncestorOf(workspace.ActiveMap)
+			and not obj == Players.LocalPlayer.Character
+		then
+			continue
+		end
+
 		zone:trackItem(obj)
 	end
 
