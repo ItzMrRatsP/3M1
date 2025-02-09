@@ -6,6 +6,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Global = require(ReplicatedStorage.Global)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
+local Zones = require(ReplicatedStorage.Shared.Zones)
 
 local SignalWrapper = require(ReplicatedStorage.Shared.SignalWrapper)
 
@@ -49,7 +50,10 @@ return function(StateMachine)
 		end)
 
 		DoorButton:GetAttributeChangedSignal("Active"):Connect(function()
-			SlidingDoorExit:SetAttribute("Active", DoorButton:GetAttribute("Active"))
+			SlidingDoorExit:SetAttribute(
+				"Active",
+				DoorButton:GetAttribute("Active")
+			)
 		end)
 
 		task.wait(1)
