@@ -10,7 +10,7 @@ local Global = require(ReplicatedStorage.Global)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local Subtitles = require(ReplicatedStorage.Client.Subtitles)
 
-local Zone = require(ReplicatedStorage.Modules.Zone)
+local Zone = require(ReplicatedStorage.Shared.Zones)
 
 local SignalWrapper = require(ReplicatedStorage.Shared.SignalWrapper)
 
@@ -71,10 +71,11 @@ return function(StateMachine)
 				true
 			)
 
-			local zone = ZonePlus.new(
+			local zone = Zone.new(
 				ActiveMap["LevelOne"].LevelRelated.LevelOneTrigger
 			)
-			print(zone)
+
+			SignalWrapper:Get("generateLevel"):Fire()
 
 			zone.playerEntered:Connect(function(player)
 				StateMachine:Transition(StateMachine.LevelOne)

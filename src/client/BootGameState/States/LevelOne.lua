@@ -6,6 +6,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Global = require(ReplicatedStorage.Global)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
+local Zones = require(ReplicatedStorage.Shared.Zones)
 
 local ActiveMap = workspace:WaitForChild("ActiveMap")
 
@@ -49,9 +50,6 @@ return function(StateMachine)
 				"Active",
 				DoorButton:GetAttribute("Active")
 			)
-
-			if SlidingDoorExit:GetAttribute("Active") then
-			end
 		end)
 	end
 	function State:Update(dt) end
