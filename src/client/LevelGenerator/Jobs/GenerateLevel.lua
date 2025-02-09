@@ -54,7 +54,7 @@ local function generateLevel()
 	end
 
 	currentLevel = janitor:Add(levelConfig.Map:Clone())
-	currentLevel.Parent = workspace
+	currentLevel.Parent = workspace:FindFirstChild("ActiveMap")
 
 	if levelConfig.HasEntrance then
 		print("Has entrance, create entrance for the room")

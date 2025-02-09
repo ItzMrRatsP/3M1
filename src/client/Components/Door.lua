@@ -12,8 +12,7 @@ local DoorComponent = Component.new {
 }
 
 -- TWEEN SETTINGS
-local tweenInfo =
-	TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut) -- 1 second animation
+local tweenInfo = TweenInfo.new(1, Enum.EasingStyle.Quad, Enum.EasingDirection.InOut)
 
 function DoorComponent:Construct()
 	print("Created")
@@ -29,6 +28,7 @@ function DoorComponent:Start()
 		main = self.Instance:FindFirstChild("Main")
 		task.wait()
 	until main
+
 	local side1: Motor6D = main:FindFirstChild("Side1")
 	local side2 = main:FindFirstChild("Side2")
 
@@ -48,25 +48,29 @@ function DoorComponent:Start()
 	}
 
 	self.isOpen = false
+
+	-- Listen for changes to the Active attribute
+	self.Instance:GetAttributeChangedSignal("Active"):Connect(function()
+		self:HandleActiveState(side1, side2)
+	end)
+
+	-- RenderStepped for auto doors
 	self.connection = RunService.RenderStepped:Connect(function()
 		if not humanoidRootPart or not main then
 			return
 		end
 
-		if self.Instance:GetAttribute("Locked") then
-			if self.isOpen then
-				self.isOpen = false
-				self:CloseDoor(side1, side2)
-			end
+		local isLocked = self.Instance:GetAttribute("Locked")
+		local distance = (humanoidRootPart.Position - main.Position).Magnitude
+
+		if isLocked then
+			-- Locked doors are controlled by "Active" instead of proximity
 			return
 		end
-
-		local distance = (humanoidRootPart.Position - main.Position).Magnitude
 
 		if distance < 10 and not self.isOpen then
 			self.isOpen = true
 			self:OpenDoor(side1, side2)
-			Global.GameUtil.playSound("Door")
 		elseif distance > 12 and self.isOpen then
 			self.isOpen = false
 			self:CloseDoor(side1, side2)
@@ -74,15 +78,32 @@ function DoorComponent:Start()
 	end)
 end
 
+function DoorComponent:HandleActiveState(side1, side2)
+	local isLocked = self.Instance:GetAttribute("Locked")
+	local isActive = self.Instance:GetAttribute("Active")
+
+	if not isLocked then
+		return -- Ignore if the door isn't locked
+	end
+
+	if isActive and not self.isOpen then
+		self.isOpen = true
+		self:OpenDoor(side1, side2)
+	elseif not isActive and self.isOpen then
+		self.isOpen = false
+		self:CloseDoor(side1, side2)
+	end
+end
+
 function DoorComponent:OpenDoor(side1, side2)
 	print("Opening door")
-
+	Global.GameUtil.playSound("Door")
 	local tweenSide1 = TweenService:Create(side1, tweenInfo, {
 		C0 = (self.OriginalPositions.Side1 * CFrame.new(0, 0, -4)),
-	}) -- Move left
+	})
 	local tweenSide2 = TweenService:Create(side2, tweenInfo, {
 		C0 = (self.OriginalPositions.Side2 * CFrame.new(0, 0, 4)),
-	}) -- Move right
+	})
 
 	tweenSide1:Play()
 	tweenSide2:Play()
@@ -95,12 +116,12 @@ function DoorComponent:CloseDoor(side1, side2)
 		side1,
 		tweenInfo,
 		{ C0 = self.OriginalPositions.Side1 }
-	) -- Move back to original position
+	)
 	local tweenSide2 = TweenService:Create(
 		side2,
 		tweenInfo,
 		{ C0 = self.OriginalPositions.Side2 }
-	) -- Move back to original position
+	)
 
 	tweenSide1:Play()
 	tweenSide2:Play()

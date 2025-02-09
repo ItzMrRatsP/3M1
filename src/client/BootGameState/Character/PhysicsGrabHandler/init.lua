@@ -129,6 +129,11 @@ function PhysicsGrab:Update(dt)
 		return
 	end
 
+	if (self.Grabbed.Position.Magnitude - self.CameraPart.Position.Magnitude) >= 8 then
+		self:Unhold()
+		return
+	end
+
 	self.AlignOrientation.CFrame =
 		CFrame.lookAt(self.Grabbed.Position, self.Head.Position)
 end
