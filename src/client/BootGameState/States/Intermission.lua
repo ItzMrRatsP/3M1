@@ -25,7 +25,7 @@ local CameraCutsceneAnimation =
 local Connected = true
 
 
-	
+
 return function(StateMachine)
 	local State = StateMachine:AddState(script.Name)
 	local janitor = Janitor.new()
@@ -65,13 +65,13 @@ return function(StateMachine)
 			
 			task.wait(0.5)
 			Subtitles.playSubtitle("Intro", true)
-			task.wait(2)
+			task.wait(1)
 			ActiveMap["Intermission"].Assets.SlidingDoor:SetAttribute("Active", true)
 		
 			local zone = ZonePlus.new(ActiveMap["LevelOne"].LevelRelated.LevelOneTrigger)
 			print(zone)
 		
-			zone.playerEntered:Connect(function(player)
+			self.ConnectionZone = zone.playerEntered:Connect(function(player)
 				StateMachine:Transition(StateMachine.LevelOne)
 				print(("%s entered the zone!"):format(player.Name))
 			end)

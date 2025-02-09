@@ -7,6 +7,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Global = require(ReplicatedStorage.Global)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 
+local SignalWrapper = require(ReplicatedStorage.Shared.SignalWrapper)
+
 local ActiveMap = workspace:WaitForChild("ActiveMap")
 
 return function(StateMachine)
@@ -50,7 +52,13 @@ return function(StateMachine)
 			SlidingDoorExit:SetAttribute("Active", DoorButton:GetAttribute("Active"))
 		end)
 
+		task.wait(1)
+
+		SignalWrapper:Get("generateLevel"):Fire()
+
 	end
+
+
 	function State:Update(dt)
 
 	end

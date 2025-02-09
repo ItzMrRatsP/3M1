@@ -93,16 +93,8 @@ function PhysicsGrab:Hold(object)
 
 		janitor:Cleanup()
 
-		local Attachment = Instance.new("Attachment")
-		Attachment.Parent = object
+		object.AssemblyLinearVelocity = Camera.CFrame.LookVector * 50
 
-		local Force = Instance.new("VectorForce")
-		Force.Attachment0 = Attachment
-		Force.Force = -self.CameraPart.CFrame.LookVector * 10000
-		Force.Parent = object
-
-		Global.GameUtil.Destroy(0.35, Attachment)
-		Global.GameUtil.Destroy(0.35, Force)
 	end, true, Enum.UserInputType.MouseButton1)
 end
 

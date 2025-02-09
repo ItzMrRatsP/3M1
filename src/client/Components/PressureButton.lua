@@ -7,7 +7,7 @@ local TweenService = game:GetService("TweenService")
 local Component = require(ReplicatedStorage.Packages.Component)
 
 local PressureButton = Component.new {
-	Tag = "PressureButton",
+    Tag = "PressureButton",
 }
 
 -- TWEEN SETTINGS
@@ -22,7 +22,12 @@ function PressureButton:Start()
     local originalPosition = Pushdown.Position
     local activeConnections = {}
     
+    self.Debounce = false
+    
     Pushdown.Touched:Connect(function(hit)
+        if self.Debounce then return end
+        self.Debounce = true
+
         local model = hit.Parent
         if model and CollectionService:HasTag(model, "Heavy") then
             local targetPosition = originalPosition - Vector3.new(0, 0.2, 0) -- Moves it down slightly
@@ -32,20 +37,24 @@ function PressureButton:Start()
             self.Instance:SetAttribute("Active", true)
             activeConnections[model] = true
         end
+
+        task.wait(0.2)
+        self.Debounce = false
     end)
     
     Pushdown.TouchEnded:Connect(function(hit)
+
         local model = hit.Parent
         if model and activeConnections[model] then
             activeConnections[model] = nil
             
-            if next(activeConnections) == nil then -- Check if no more "Heavy" objects are on the button
+            if next(activeConnections) == nil then 
                 local tween = TweenService:Create(Pushdown, tweenInfo, {Position = originalPosition})
                 tween:Play()
                 
                 self.Instance:SetAttribute("Active", false)
             end
-        end
+        endff
     end)
 end
 
