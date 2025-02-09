@@ -35,6 +35,9 @@ return function(StateMachine)
 			task.wait()
 		until Global.Character ~= nil
 
+		local Noises: Sound =
+			ReplicatedStorage.Assets.Sounds:FindFirstChild("Noise")
+
 		CameraCutsceneRig.Parent = workspace
 		Global.Character.Root.Anchored = true
 		CameraCutsceneRig:PivotTo(
@@ -50,9 +53,10 @@ return function(StateMachine)
 
 		repeat
 			task.wait()
-		until CameraCutsceneTrack.Length > 0
-		print("Working")
+		until CameraCutsceneTrack.Length > 0 and Noises.TimeLength > 0
+
 		CameraCutsceneTrack.Looped = false
+		Noises:Play()
 		CameraCutsceneTrack:Play()
 
 		task.wait(0.5)

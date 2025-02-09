@@ -4,6 +4,8 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 local TweenService = game:GetService("TweenService")
 
+local Zones = require(ReplicatedStorage.Shared.Zones)
+
 local Component = require(ReplicatedStorage.Packages.Component)
 
 local PressureButton = Component.new {
@@ -21,49 +23,39 @@ function PressureButton:Start()
 	local originalPosition = Pushdown.Position
 	local activeConnections = {}
 
-	self.Debounce = false
+	local zoneCFrame = self.Instance:GetPivot()
+	local zoneSize = Vector3.new(5, 5, 5)
+	local zone = Zones.fromRegion(zoneCFrame, zoneSize)
 
-	Pushdown.Touched:Connect(function(hit)
-		if self.Debounce then
-			return
-		end
-		self.Debounce = true
+	zone.itemEntered:Connect(function(item)
+		local targetPosition = originalPosition - Vector3.new(0, 0.2, 0) -- Moves it down slightly
+		local tween = TweenService:Create(
+			Pushdown,
+			tweenInfo,
+			{ Position = targetPosition }
+		)
+		tween:Play()
 
-		local model = hit.Parent
-		if model and CollectionService:HasTag(model, "Heavy") then
-			local targetPosition = originalPosition
-				- Vector3.new(0, 0.2, 0) -- Moves it down slightly
-			local tween = TweenService:Create(
-				Pushdown,
-				tweenInfo,
-				{ Position = targetPosition }
-			)
-			tween:Play()
-
-			self.Instance:SetAttribute("Active", true)
-			activeConnections[model] = true
-		end
-
-		task.wait(0.2)
-		self.Debounce = false
+		self.Instance:SetAttribute("Active", true)
 	end)
 
-	Pushdown.TouchEnded:Connect(function(hit)
-		local model = hit.Parent
-		if model and activeConnections[model] then
-			activeConnections[model] = nil
+	zone.itemExited:Connect(function(item)
+		local tween = TweenService:Create(
+			Pushdown,
+			tweenInfo,
+			{ Position = originalPosition }
+		)
+		tween:Play()
 
-			if next(activeConnections) == nil then
-				local tween = TweenService:Create(
-					Pushdown,
-					tweenInfo,
-					{ Position = originalPosition }
-				)
-				tween:Play()
+		self.Instance:SetAttribute("Active", false)
+	end)
 
-				self.Instance:SetAttribute("Active", false)
-			end
-		end
+	for _, obj in pairs(CollectionService:GetTagged("Heavy")) do
+		zone:trackItem(obj)
+	end
+
+	CollectionService:GetInstanceAddedSignal("Heavy"):Connect(function(obj)
+		zone:trackItem(obj)
 	end)
 end
 

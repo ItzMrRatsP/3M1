@@ -14,13 +14,7 @@ return function(StateMachine)
 	local State = StateMachine:AddState(script.Name)
 	local janitor = Janitor.new()
 
-	function State:Enter()
-		SignalWrapper:Get("generateLevel"):Fire()
-		ActiveMap["LevelTwo"].Assets.SlidingDoorEntry:SetAttribute(
-			"Locked",
-			true
-		)
-	end
+	function State:Enter() end
 
 	function State:Start() end
 

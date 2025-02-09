@@ -94,7 +94,6 @@ function PhysicsGrab:Hold(object)
 		janitor:Cleanup()
 
 		object.AssemblyLinearVelocity = Camera.CFrame.LookVector * 50
-
 	end, true, Enum.UserInputType.MouseButton1)
 end
 
@@ -121,7 +120,12 @@ function PhysicsGrab:Update(dt)
 		return
 	end
 
-	if (self.Grabbed.Position.Magnitude - self.CameraPart.Position.Magnitude) >= 8 then
+	if
+		(
+			self.Grabbed.Position.Magnitude
+			- self.CameraPart.Position.Magnitude
+		) >= 8
+	then
 		self:Unhold()
 		return
 	end
@@ -138,6 +142,7 @@ function PhysicsGrab:Unhold()
 	end
 	--PhysicsGrab:EnabledCollision(self.Grabbed)
 	self.Grabbed = nil
+	janitor:Cleanup()
 end
 
 function PhysicsGrab:Start()
