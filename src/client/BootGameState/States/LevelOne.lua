@@ -4,12 +4,9 @@ local ContentProvider = game:GetService("ContentProvider")
 local Lighting = game:GetService("Lighting")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
-local Global = require(ReplicatedStorage.Global)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local SignalWrapper = require(ReplicatedStorage.Shared.SignalWrapper)
 local Zones = require(ReplicatedStorage.Shared.Zones)
-
-local SignalWrapper = require(ReplicatedStorage.Shared.SignalWrapper)
 
 local ActiveMap = workspace:WaitForChild("ActiveMap")
 
@@ -17,9 +14,7 @@ return function(StateMachine)
 	local State = StateMachine:AddState(script.Name)
 	local janitor = Janitor.new()
 
-	function State:Start() 
-		
-	end
+	function State:Start() end
 
 	function State:Enter()
 		local LevelOne = ActiveMap["LevelOne"]
@@ -33,15 +28,6 @@ return function(StateMachine)
 
 		SlidingDoorEntry:SetAttribute("Locked", true)
 		SlidingDoorEntry:SetAttribute("Active", false)
-
-		local zone =
-			Zones.new(ActiveMap["LevelTwo"].LevelRelated.LevelTwoTrigger)
-
-		zone.playerEntered:Connect(function(player)
-			StateMachine:Transition(StateMachine.LevelTwo)
-			SignalWrapper:Get("generateLevel"):Fire()
-			print(("%s entered the zone!"):format(player.Name))
-		end)
 
 		local function OnTimedButtonActivated()
 			LazerPart.CanCollide = false
@@ -66,16 +52,34 @@ return function(StateMachine)
 			)
 		end)
 
-		task.wait(1)
-
 		SignalWrapper:Get("generateLevel"):Fire()
 
+		task.spawn(function()
+			repeat
+				task.wait()
+			until ActiveMap:FindFirstChild("LevelTwo")
+
+			local zone = Zones.new(
+				ActiveMap["LevelTwo"].LevelRelated.LevelTwoTrigger
+			)
+
+			janitor:Add(
+				zone.playerEntered:Connect(function(player)
+					-- Disconnect zone first thing
+					janitor:Remove("Zone")
+
+					-- Transition to LevelTwo and generate the next level
+					StateMachine:Transition(StateMachine.LevelTwo)
+					SignalWrapper:Get("generateLevel"):Fire()
+				end),
+
+				"Disconnect",
+				"Zone"
+			)
+		end)
 	end
 
-
-	function State:Update(dt)
-
-	end
+	function State:Update(dt) end
 
 	function State:Exit()
 		janitor:Cleanup()
