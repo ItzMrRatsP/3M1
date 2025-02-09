@@ -75,8 +75,6 @@ return function(StateMachine)
 				ActiveMap["LevelOne"].LevelRelated.LevelOneTrigger
 			)
 
-			SignalWrapper:Get("generateLevel"):Fire()
-
 			zone.playerEntered:Connect(function(player)
 				StateMachine:Transition(StateMachine.LevelOne)
 				SignalWrapper:Get("generateLevel"):Fire()

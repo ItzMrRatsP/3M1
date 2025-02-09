@@ -6,6 +6,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Global = require(ReplicatedStorage.Global)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
+local SignalWrapper = require(ReplicatedStorage.Shared.SignalWrapper)
 local Zones = require(ReplicatedStorage.Shared.Zones)
 
 local ActiveMap = workspace:WaitForChild("ActiveMap")
@@ -28,6 +29,15 @@ return function(StateMachine)
 
 		SlidingDoorEntry:SetAttribute("Locked", true)
 		SlidingDoorEntry:SetAttribute("Active", false)
+
+		local zone =
+			Zones.new(ActiveMap["LevelTwo"].LevelRelated.LevelTwoTrigger)
+
+		zone.playerEntered:Connect(function(player)
+			StateMachine:Transition(StateMachine.LevelTwo)
+			SignalWrapper:Get("generateLevel"):Fire()
+			print(("%s entered the zone!"):format(player.Name))
+		end)
 
 		local function OnTimedButtonActivated()
 			LazerPart.CanCollide = false
