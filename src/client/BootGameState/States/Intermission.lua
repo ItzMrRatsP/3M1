@@ -24,6 +24,8 @@ local CameraCutsceneAnimation =
 
 local Connected = true
 
+
+
 return function(StateMachine)
 	local State = StateMachine:AddState(script.Name)
 	local janitor = Janitor.new()
@@ -42,27 +44,25 @@ return function(StateMachine)
 				* CFrame.new(0, -2, -0.2)
 				* CFrame.Angles(0, math.rad(180), 0)
 		)
-
+	
 		local CameraCutsceneTrack: AnimationTrack =
-			CameraCutsceneRig.Humanoid:LoadAnimation(
-				CameraCutsceneAnimation
-			)
-
+			CameraCutsceneRig.Humanoid:LoadAnimation(CameraCutsceneAnimation)
+	
 		repeat
 			task.wait()
 		until CameraCutsceneTrack.Length > 0
 		print("Working")
 		CameraCutsceneTrack.Looped = false
 		CameraCutsceneTrack:Play()
-
+	
 		task.wait(0.5)
 		ReplicatedStorage:SetAttribute("StartLoading", false)
-
+	
 		CameraCutsceneTrack.Stopped:Connect(function()
 			Connected = false
 			Global.Character.Root.AssemblyLinearVelocity = Vector3.zero
 			Global.Character.Root.Anchored = false
-
+			
 			task.wait(0.5)
 			Subtitles.playSubtitle("Intro", true)
 			task.wait(2)
@@ -77,13 +77,14 @@ return function(StateMachine)
 
 			zone.playerEntered:Connect(function(player)
 				StateMachine:Transition(StateMachine.LevelOne)
-				SignalWrapper:Get("generateLevel"):Fire()
 				print(("%s entered the zone!"):format(player.Name))
 			end)
 		end)
+
 	end
 
 	function State:Update(dt)
+
 		if Connected then
 			CameraCutsceneRig.Torso.CanCollide = false
 			Camera.CFrame = CameraCutsceneRig.Torso.CFrame

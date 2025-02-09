@@ -8,7 +8,7 @@ local Levels = {}
 Levels.OrderedIndex = Global.GameUtil.arrtodictsorted {
 	"Intermission",
 	"LevelOne",
-	"LevelTwo",
+	"LevelTwo"
 }
 
 Levels.IndexedLevel = {
@@ -25,13 +25,14 @@ Levels.Config = {
 
 	[Levels.OrderedIndex.LevelOne] = {
 		Map = Maps:FindFirstChild("LevelOne"),
-		HasEntrance = false,
+		HasEntrance = true,
 	},
 
 	[Levels.OrderedIndex.LevelTwo] = {
 		Map = Maps:FindFirstChild("LevelTwo"),
 		HasEntrance = true,
 	},
+
 } :: {
 	[number]: {
 		Map: Folder,

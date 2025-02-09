@@ -9,13 +9,17 @@ local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local SignalWrapper = require(ReplicatedStorage.Shared.SignalWrapper)
 local Zones = require(ReplicatedStorage.Shared.Zones)
 
+local SignalWrapper = require(ReplicatedStorage.Shared.SignalWrapper)
+
 local ActiveMap = workspace:WaitForChild("ActiveMap")
 
 return function(StateMachine)
 	local State = StateMachine:AddState(script.Name)
 	local janitor = Janitor.new()
 
-	function State:Start() end
+	function State:Start() 
+		
+	end
 
 	function State:Enter()
 		local LevelOne = ActiveMap["LevelOne"]
@@ -61,8 +65,17 @@ return function(StateMachine)
 				DoorButton:GetAttribute("Active")
 			)
 		end)
+
+		task.wait(1)
+
+		SignalWrapper:Get("generateLevel"):Fire()
+
 	end
-	function State:Update(dt) end
+
+
+	function State:Update(dt)
+
+	end
 
 	function State:Exit()
 		janitor:Cleanup()
