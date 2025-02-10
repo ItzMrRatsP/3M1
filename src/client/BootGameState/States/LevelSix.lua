@@ -145,6 +145,12 @@ return function(StateMachine)
 				SignalWrapper:Get("removePreviousLevel")
 					:Fire("LevelSeven")
 
+				local SevenEntryDoor =
+					ActiveMap["LevelSeven"].LevelRelated:FindFirstChild(
+						"EntryDoor"
+					)
+
+				SevenEntryDoor:SetAttribute("Locked", true)
 				StateMachine:Transition(StateMachine.LevelSeven)
 			end),
 
