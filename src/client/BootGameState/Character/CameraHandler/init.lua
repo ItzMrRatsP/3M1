@@ -3,6 +3,8 @@ local runService = game:GetService("RunService")
 local camera = workspace.CurrentCamera
 local uis = game:GetService("UserInputService")
 
+local RNG = Random.new()
+
 local function lerp(a, b, c)
 	return a + (b - a) * c
 end
@@ -14,7 +16,11 @@ function CameraHandler.new(character)
 	local self = setmetatable({}, CameraHandler)
 	self.character = character
 	self.humanoid = character.Humanoid
-	self.enabled = false
+	self.enabled = true
+
+	self.shaking = false
+	self.intensity = 1
+
 	self.bobbingConnection = nil
 
 	self.horizontalBobbing = 0
@@ -31,13 +37,35 @@ function CameraHandler.new(character)
 end
 
 function CameraHandler:Enable()
-	if self.enabled then
-		return
-	end
-	self.enabled = true
-
 	self.bobbingConnection = runService.RenderStepped:Connect(
 		function(deltaTime)
+			if not self.enabled then
+				if self.shaking then
+					local x = RNG:NextInteger(
+						-self.intensity,
+						self.intensity
+					)
+
+					local y = RNG:NextInteger(
+						-self.intensity,
+						self.intensity
+					)
+
+					camera.CFrame = camera.CFrame:Lerp(
+						camera.CFrame
+							* CFrame.Angles(
+								math.rad(x),
+								math.rad(y),
+								math.rad(x)
+							),
+
+						1 - 0.05 ^ deltaTime
+					)
+				end
+
+				return
+			end
+
 			deltaTime = deltaTime * 60
 
 			local rootPart = self.character.Root
@@ -167,15 +195,7 @@ function CameraHandler:Enable()
 end
 
 function CameraHandler:Disable()
-	if not self.enabled then
-		return
-	end
 	self.enabled = false
-
-	if self.bobbingConnection then
-		self.bobbingConnection:Disconnect()
-		self.bobbingConnection = nil
-	end
 end
 
 function CameraHandler:Destroy()

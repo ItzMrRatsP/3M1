@@ -8,6 +8,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local Character = require(ReplicatedStorage.Client.BootGameState.Character)
 local Global = require(ReplicatedStorage.Global)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
+local LightingPresets = require(ReplicatedStorage.Client.LightingPresets)
 local Subtitles = require(ReplicatedStorage.Client.Subtitles)
 
 local Zone = require(ReplicatedStorage.Shared.Zones)
@@ -68,7 +69,7 @@ return function(StateMachine)
 			Global.Character.Root.Anchored = false
 
 			task.wait(0.5)
-			--Subtitles.playSubtitle("Intro", true)
+			Subtitles.playSubtitle("Intro", true)
 			task.wait(2)
 			ActiveMap["Intermission"].Assets.SlidingDoor:SetAttribute(
 				"Active",
@@ -84,10 +85,10 @@ return function(StateMachine)
 					StateMachine:Transition(StateMachine.LevelOne)
 					Subtitles.playSubtitle("StartLVLOne", false, 2)
 
-					--task.delay(3, function()
-						--SignalWrapper:Get("removePreviousLevel")
-							--:Fire("LevelOne")
-					--end)
+					task.delay(3, function()
+						SignalWrapper:Get("removePreviousLevel")
+							:Fire("LevelOne")
+					end)
 				end
 			)
 		end)

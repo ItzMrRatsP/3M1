@@ -18,8 +18,9 @@ function cast(playerCharacter)
 
 	local humanoidRootPart =
 		playerCharacter:FindFirstChild("HumanoidRootPart")
+
 	local origin = humanoidRootPart.Position
-	local direction = -(humanoidRootPart.CFrame.UpVector * 35) -- Minus 30 stud lower than hmrpt.
+	local direction = Vector3.new(0, -15, 0) -- Minus 30 stud lower than hmrpt.
 
 	local ray = workspace:Raycast(origin, direction, params)
 
@@ -42,10 +43,6 @@ local function playerCharacterAdded(Character)
 	local footstepSounds = FootstepSounds:GetChildren()
 
 	janitor:Add(RunService.Heartbeat:Connect(function()
-		if humanoidRootPart.Anchored then
-			return
-		end
-
 		if humanoid.MoveDirection.Magnitude <= 0 then
 			return
 		end
@@ -106,17 +103,11 @@ local function playerCharacterAdded(Character)
 end
 
 local function boot()
-	for _, Player in Players:GetPlayers() do
-		if not Player.Character then
-			continue
-		end
-
-		playerCharacterAdded(Player.Character)
+	if Players.LocalPlayer.Character then
+		playerCharacterAdded(Players.LocalPlayer.Character)
 	end
 
-	Players.PlayerAdded:Connect(function(Player)
-		Player.CharacterAdded:Connect(playerCharacterAdded)
-	end)
+	Players.LocalPlayer.CharacterAdded:Connect(playerCharacterAdded)
 end
 
 return Global.Schedule:Add(boot)

@@ -1,7 +1,7 @@
-local ReplicatedStorage = game:GetService("ReplicatedStorage")
-local ReplicatedFirst = game:GetService("ReplicatedFirst")
-local RunService = game:GetService("RunService")
 local Players = game:GetService("Players")
+local ReplicatedFirst = game:GetService("ReplicatedFirst")
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local RunService = game:GetService("RunService")
 
 local UserInputService = game:GetService("UserInputService")
 
@@ -10,9 +10,9 @@ local Client = ReplicatedStorage:WaitForChild("Client")
 local Packages = ReplicatedStorage:WaitForChild("Packages")
 local Assets = ReplicatedStorage:WaitForChild("Assets")
 
-local Janitor = require(Packages.Janitor)
-local Global = require(ReplicatedStorage.Global)
 local CameraHandlerModule = require(script.CameraHandler)
+local Global = require(ReplicatedStorage.Global)
+local Janitor = require(Packages.Janitor)
 local PhysicsGrabModule = require(script.PhysicsGrabHandler)
 
 local Camera = workspace.CurrentCamera
@@ -27,7 +27,7 @@ local HumanoidDisabledStates = {
 	Enum.HumanoidStateType.Swimming,
 	Enum.HumanoidStateType.Climbing,
 	Enum.HumanoidStateType.Ragdoll,
-	Enum.HumanoidStateType.FallingDown
+	Enum.HumanoidStateType.FallingDown,
 }
 
 local function DisableStates(Humanoid, States)
@@ -35,7 +35,6 @@ local function DisableStates(Humanoid, States)
 		Humanoid:SetStateEnabled(State, false)
 	end
 end
-
 
 function Character.new(CharacterInstance)
 	local self = setmetatable({}, Character)
@@ -45,40 +44,44 @@ function Character.new(CharacterInstance)
 	self.Root = self.Humanoid.RootPart
 	self.Janitor = Janitor.new()
 
-	local CameraHandler = CameraHandlerModule.new(self)
+	self.CameraHandler = CameraHandlerModule.new(self)
 	self.PhysicsGrabHandler = PhysicsGrabModule.new(self)
 
-	CameraHandler:Enable()
+	self.CameraHandler:Enable()
 	for _, Part in self.CharacterInstance:GetDescendants() do
-	
-		if not Part:IsA("Sound") then continue end
+		if not Part:IsA("Sound") then
+			continue
+		end
 		Part:Destroy()
 	end
 
-    DisableStates(self.Humanoid, HumanoidDisabledStates)
+	DisableStates(self.Humanoid, HumanoidDisabledStates)
 
-    self.WalkSpeed = 1
-	self.MovementStateMachine = self.Janitor:Add(Global.StateMachine.newFromFolder(script.MovementStates, self), "Destroy")
+	self.WalkSpeed = 1
+	self.MovementStateMachine = self.Janitor:Add(
+		Global.StateMachine.newFromFolder(script.MovementStates, self),
+		"Destroy"
+	)
 
 	self.MovementStateMachine:Start(self.MovementStateMachine.Idle)
 
-	self.Janitor:Add(UserInputService.InputBegan:Connect(function(Input, GameProccessed)
-
-		if Input.KeyCode == Enum.KeyCode.E then
-			print("Input Sent")
-			if self.PhysicsGrabHandler:IsGrabbing() then
-				self.PhysicsGrabHandler:Unhold()
-				return
+	self.Janitor:Add(
+		UserInputService.InputBegan:Connect(function(Input, GameProccessed)
+			if Input.KeyCode == Enum.KeyCode.E then
+				print("Input Sent")
+				if self.PhysicsGrabHandler:IsGrabbing() then
+					self.PhysicsGrabHandler:Unhold()
+					return
+				end
+				local Object: BasePart =
+					self.PhysicsGrabHandler:CheckForObjects()
+				print(Object)
+				if Object and Object:HasTag("Grabbable") then
+					self.PhysicsGrabHandler:Hold(Object)
+				end
 			end
-			local Object : BasePart = self.PhysicsGrabHandler:CheckForObjects()
-			print(Object)
-			if Object and Object:HasTag("Grabbable") then
-				
-				self.PhysicsGrabHandler:Hold(Object)
-			end
-		end
-
-	end))
+		end)
+	)
 
 	self.Janitor:Add(RunService.RenderStepped:Connect(function(dt)
 		self:Update(dt)
@@ -88,7 +91,7 @@ function Character.new(CharacterInstance)
 end
 
 function Character:Update(DT)
-    self.Humanoid.WalkSpeed = self.WalkSpeed
+	self.Humanoid.WalkSpeed = self.WalkSpeed
 	self.PhysicsGrabHandler:Update()
 end
 

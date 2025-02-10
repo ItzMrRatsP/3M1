@@ -8,6 +8,7 @@ local TweenService = game:GetService("TweenService")
 local GameConfig = require(ReplicatedStorage.Global.Config.GameConfig)
 local Global = require(ReplicatedStorage.Global)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
+local LightingPresets = require(ReplicatedStorage.Client.LightingPresets)
 local Promise = require(ReplicatedStorage.Packages.Promise)
 local SignalWrapper = require(ReplicatedStorage.Shared.SignalWrapper)
 
@@ -40,6 +41,7 @@ local function setBrightness(number: number, multi)
 			false,
 			Delay -- delay count
 		)
+
 		if Object:GetAttribute("Index") ~= 5 then
 			task.delay(Delay, function()
 				Global.GameUtil.playSound("Flicker")

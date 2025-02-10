@@ -46,7 +46,7 @@ return function(Text: string, Speed)
 				BackgroundTransparency = 0.75,
 				BorderColor3 = Color3.fromRGB(0, 0, 0),
 				BorderSizePixel = 0,
-				Position = UDim2.fromScale(0.5, 0.975),
+				Position = UDim2.fromScale(0.5, 0.9),
 				Size = UDim2.fromScale(0.223, 0.0195),
 
 				[Children] = {

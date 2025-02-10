@@ -17,7 +17,15 @@ Subtitles.Enums = GameUtil.arrtodict {
 	"Emily_LVLThree_complete",
 	"Emily_LVLFour_intro",
 	"Emily_LVLSix_not_intentional",
-	"Emily_LVLSix_whatshappening"
+	"Emily_LVLSix_whatshappening",
+	"Emily_Control_Enter",
+	"Emily_Avoid_Right",
+	"Emily_LVLSeven_Section3",
+	"Emily_LVLSeven_Section3.5",
+	"Emily_Ending_Introduction",
+	"Emily_BadEnding",
+	"Emily_Reboot",
+	"Emily_Shutdown",
 }
 
 Subtitles.Config = {
@@ -95,6 +103,7 @@ Subtitles.Config = {
 			true
 		),
 	},
+
 	[Subtitles.Enums.Emily_LVLSix_just_through_here] = {
 		Text = "Ah, here we are. Just through here, okay?",
 		Audio = ReplicatedStorage.Assets.Sounds:FindFirstChild(
@@ -110,23 +119,72 @@ Subtitles.Config = {
 		),
 	},
 	[Subtitles.Enums.Emily_LVLSix_whatshappening] = {
-		Text =  "What is happening?!",
+		Text = "What is happening?!",
 		Audio = ReplicatedStorage.Assets.Sounds:FindFirstChild(
 			"Emily_LVLSix_whatshappening",
 			true
 		),
 	},
 	[Subtitles.Enums.Emily_LVLFour_intro] = {
-		Text = "Now you got two cubes! Shouldn't be a problem for you right?",
+		Text = "Now you got two cubes! That shouldn't be an issue for you, Right?",
 		Audio = ReplicatedStorage.Assets.Sounds:FindFirstChild(
 			"Emily_LVLFour_intro",
 			true
 		),
 	},
+
 	[Subtitles.Enums.Emily_LVLSix_out_of_bounds] = {
 		Text = "This portion of the room is normally inaccessible and 'out of bounds', as you might call it. I must request for you to remove that knowledge from your memory, otherwise I will be forced to do a mandatory, manual, memory wipe of this room from your brain. It will hurt. Make the right choice for me.",
 		Audio = ReplicatedStorage.Assets.Sounds:FindFirstChild(
 			"Emily_LVLSix_out_of_bounds",
+			true
+		),
+	},
+
+	[Subtitles.Enums.Emily_Avoid_Right] = {
+		Text = "Ah, you see that door on the left labeled... eh... the 'Super Painful Death Door?' Yes, I'd like you to go through that one. ...The right door? The... oh. My control panel. Yes, avoid that one.",
+		Audio = ReplicatedStorage.Assets.Sounds:FindFirstChild(
+			"Emily_Avoid_Right",
+			true
+		),
+	},
+
+	[Subtitles.Enums.Emily_Control_Enter] = {
+		Text = "No no no, don't...! Sigh... great, alright. What a shame it is that you subjects have free will.",
+		Audio = ReplicatedStorage.Assets.Sounds:FindFirstChild(
+			"Emily_Control_Enter",
+			true
+		),
+	},
+
+	[Subtitles.Enums.Emily_LVLSeven_Section3] = {
+		Text = "You need the required Activation Key to open this. Or two cubes. You clearly don't have the cubes, so wait here while I fetch the Activation Key.",
+		Audio = ReplicatedStorage.Assets.Sounds:FindFirstChild(
+			"Emily_LVLSeven_Section3",
+			true
+		),
+	},
+
+	[Subtitles.Enums["Emily_LVLSeven_Section3.5"]] = {
+		Text = "...Where the hell did you get those? Or find those?",
+		Audio = ReplicatedStorage.Assets.Sounds:FindFirstChild(
+			"Emily_LVLSeven_Section3.5",
+			true
+		),
+	},
+
+	[Subtitles.Enums.Emily_Ending_Introduction] = {
+		Text = "God, this place is falling apart! I need you to shut me down. I won't be able to function soon at this rate, and I'd prefer for my death to at least be on my own terms... unless you don't have it in you to do so... I believe this is what I want. I think. I mean, it should just be... powering off, correct? Oh, what am I saying, you can't properly respond to me, can you? Just do it. I'm ready.",
+		Audio = ReplicatedStorage.Assets.Sounds:FindFirstChild(
+			"Emily_Ending_Introduction",
+			true
+		),
+	},
+
+	[Subtitles.Enums.Emily_Shutdown] = {
+		Text = "Thank you.",
+		Audio = ReplicatedStorage.Assets.Sounds:FindFirstChild(
+			"Emily_Shutdown",
 			true
 		),
 	},

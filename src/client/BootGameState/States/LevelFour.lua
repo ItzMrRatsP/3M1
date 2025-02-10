@@ -4,6 +4,7 @@ local Lighting = game:GetService("Lighting")
 local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
+local CameraShaker = require(ReplicatedStorage.Shared.CameraShaker)
 local Door = require(ReplicatedStorage.Client.Components.Door)
 local Global = require(ReplicatedStorage.Global)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
@@ -13,6 +14,14 @@ local Subtitles = require(ReplicatedStorage.Client.Subtitles)
 local Zones = require(ReplicatedStorage.Shared.Zones)
 
 local ActiveMap = workspace:WaitForChild("ActiveMap")
+local Camera = workspace.CurrentCamera
+
+local CameraShake = CameraShaker.new(
+	Enum.RenderPriority.Camera.Value + 1,
+	function(CF)
+		Camera.CFrame *= CF
+	end
+)
 
 return function(StateMachine)
 	local State = StateMachine:AddState(script.Name)
@@ -58,10 +67,10 @@ return function(StateMachine)
 
 		janitor:Add(
 			zone.playerEntered:Connect(function()
-				-- task.delay(3, function()
-				-- 	SignalWrapper:Get("removePreviousLevel")
-				-- 		:Fire("LevelSix")
-				-- end)
+				task.delay(3, function()
+					SignalWrapper:Get("removePreviousLevel")
+						:Fire("LevelFive")
+				end)
 
 				StateMachine:Transition(StateMachine.LevelFive)
 				Subtitles.playSubtitle("LVLFive_1", true)
@@ -74,13 +83,21 @@ return function(StateMachine)
 				SignalWrapper:Get("SetMainVolume"):Fire(0.125)
 				ScaryNoise:Play()
 
+				Global.Character.CameraHandler.shaking = true
+				Global.Character.CameraHandler.intensity = 4
+				Global.Character.CameraHandler.enabled = false
+
 				janitor:AddPromise(
 					Promise.fromEvent(ScaryNoise.Ended, function()
 						return true
 					end)
 						:andThen(function()
-							task.wait(0.25)
+							Global.Character.CameraHandler.shaking =
+								false
+							Global.Character.CameraHandler.enabled =
+								true
 
+							task.wait(0.25)
 							SignalWrapper:Get("SetMainVolume")
 								:Fire(0.5)
 						end)

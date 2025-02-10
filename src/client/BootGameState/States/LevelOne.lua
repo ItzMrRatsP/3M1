@@ -49,9 +49,11 @@ return function(StateMachine)
 		end)
 
 		DoorButton:GetAttributeChangedSignal("Active"):Connect(function()
-			if not ActivatedOnce and DoorButton:GetAttribute("Active") then
+			if
+				not ActivatedOnce and DoorButton:GetAttribute("Active")
+			then
 				ActivatedOnce = true
-				task.delay(2, Subtitles.playSubtitle, "CompleteLVLOne")
+				-- task.delay(2, Subtitles.playSubtitle, "CompleteLVLOne")
 				--Subtitles.playSubtitle("CompleteLVLOne", false, 2)
 			end
 

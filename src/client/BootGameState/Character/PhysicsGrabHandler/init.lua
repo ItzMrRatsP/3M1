@@ -121,7 +121,7 @@ function PhysicsGrab:Hold(object)
 
 		janitor:Cleanup()
 
-		object.AssemblyLinearVelocity = Camera.CFrame.LookVector * 50
+		object.AssemblyLinearVelocity = Camera.CFrame.LookVector * 75
 	end, true, Enum.UserInputType.MouseButton1)
 end
 

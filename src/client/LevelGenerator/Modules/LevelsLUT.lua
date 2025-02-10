@@ -13,6 +13,8 @@ Levels.OrderedIndex = Global.GameUtil.arrtodictsorted {
 	"LevelFour",
 	"LevelFive",
 	"LevelSix",
+	"LevelSeven",
+	"LevelEight",
 }
 
 Levels.IndexedLevel = {
@@ -23,6 +25,8 @@ Levels.IndexedLevel = {
 	[Levels.OrderedIndex.LevelFour] = "LevelFour",
 	[Levels.OrderedIndex.LevelFive] = "LevelFive",
 	[Levels.OrderedIndex.LevelSix] = "LevelSix",
+	[Levels.OrderedIndex.LevelSeven] = "LevelSeven",
+	[Levels.OrderedIndex.LevelEight] = "LevelEight",
 }
 
 Levels.Config = {
@@ -58,6 +62,16 @@ Levels.Config = {
 
 	[Levels.OrderedIndex.LevelSix] = {
 		Map = Maps:FindFirstChild("LevelSix"),
+		HasEntrance = true,
+	},
+
+	[Levels.OrderedIndex.LevelSeven] = {
+		Map = Maps:FindFirstChild("LevelSeven"),
+		HasEntrance = true,
+	},
+
+	[Levels.OrderedIndex.LevelEight] = {
+		Map = Maps:FindFirstChild("LevelEight"),
 		HasEntrance = true,
 	},
 } :: {

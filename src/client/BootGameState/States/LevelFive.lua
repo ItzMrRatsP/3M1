@@ -20,7 +20,7 @@ return function(StateMachine)
 		local PressureButton = Level.Assets:FindFirstChild("PressureButton")
 		local EntranceDoor = Level.Assets:FindFirstChild("EntryDoor")
 		local ExitDoor = Level.Assets:FindFirstChild("ExitDoor")
-		
+
 		SignalWrapper:Get("generateLevel"):Fire()
 
 		EntranceDoor:SetAttribute("Locked", true)
@@ -43,11 +43,13 @@ return function(StateMachine)
 		janitor:Add(
 			zone.playerEntered:Connect(function()
 				StateMachine:Transition(StateMachine.LevelSix)
+				SignalWrapper:Get("removePreviousLevel")
+					:Fire("LevelSix")
 			end),
 
 			"Disconnect"
 		)
-	end	
+	end
 
 	function State:Start() end
 
