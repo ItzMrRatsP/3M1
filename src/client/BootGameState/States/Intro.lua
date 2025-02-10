@@ -87,9 +87,12 @@ return function(StateMachine)
 				end)
 				:andThen(function()
 					task.wait(1)
-					ReplicatedStorage:SetAttribute("StartLoading", true)
+					ReplicatedStorage:SetAttribute(
+						"StartLoading",
+						true
+					)
 					SignalWrapper:Get("generateLevel"):Fire()
-					
+
 					task.wait(1)
 					janitor:Cleanup()
 				end))
@@ -105,7 +108,8 @@ return function(StateMachine)
 	end
 
 	function State:Exit()
-		Camera.CameraType = Enum.CameraType.Custom		Lighting.Ambient = OriginalLighting.Ambient
+		Camera.CameraType = Enum.CameraType.Custom
+		Lighting.Ambient = OriginalLighting.Ambient
 		Lighting.EnvironmentDiffuseScale =
 			OriginalLighting.EnvironmentDiffuseScale
 		Lighting.EnvironmentSpecularScale =

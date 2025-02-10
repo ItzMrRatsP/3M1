@@ -5,8 +5,11 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local RunService = game:GetService("RunService")
 
 local Door = require(ReplicatedStorage.Client.Components.Door)
+local Global = require(ReplicatedStorage.Global)
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
+local Promise = require(ReplicatedStorage.Packages.Promise)
 local SignalWrapper = require(ReplicatedStorage.Shared.SignalWrapper)
+local Subtitles = require(ReplicatedStorage.Client.Subtitles)
 local Zones = require(ReplicatedStorage.Shared.Zones)
 
 local ActiveMap = workspace:WaitForChild("ActiveMap")
@@ -26,14 +29,7 @@ return function(StateMachine)
 		local Button2 = Level.Assets:FindFirstChild("Button2")
 		local Piston = Level.Assets:FindFirstChild("Piston")
 
-		task.spawn(function()
-			while PistonButton:GetAttribute("Active") do
-				Piston:SetAttribute("Active", true)
-				task.wait(2)
-				Piston:SetAttribute("Active", false)
-				task.wait(2)
-			end
-		end)
+		SignalWrapper:Get("generateLevel"):Fire()
 
 		--todo, while pistonButton active, every 2 seconds Piston is activated and deactivated
 		EntryDoor:SetAttribute("Locked", true)
@@ -54,13 +50,76 @@ return function(StateMachine)
 			:Connect(JointButtonPressed)
 		Button2:GetAttributeChangedSignal("Active")
 			:Connect(JointButtonPressed)
+
+		local zone = Zones.new(
+			ActiveMap["LevelFive"].Assets:FindFirstChild("Zone")
+		)
+
+		janitor:Add(
+			zone.playerEntered:Connect(function()
+				-- task.delay(3, function()
+				-- 	SignalWrapper:Get("removePreviousLevel")
+				-- 		:Fire("LevelSix")
+				-- end)
+
+				StateMachine:Transition(StateMachine.LevelFive)
+				Subtitles.playSubtitle("LVLFive_1", true)
+
+				local ScaryNoise =
+					ReplicatedStorage.Assets.Sounds:FindFirstChild(
+						"ScaryNoise"
+					)
+
+				SignalWrapper:Get("SetMainVolume"):Fire(0.125)
+				ScaryNoise:Play()
+
+				janitor:AddPromise(
+					Promise.fromEvent(ScaryNoise.Ended, function()
+						return true
+					end)
+						:andThen(function()
+							task.wait(0.25)
+							Subtitles.playSubtitle(
+								"LVLFive_2",
+								true
+							)
+
+							SignalWrapper:Get("SetMainVolume")
+								:Fire(0.5)
+						end)
+						:catch(warn)
+				)
+			end),
+
+			"Disconnect"
+		)
+
+		janitor:Add(
+			task.spawn(function()
+				while true do
+					if not PistonButton:GetAttribute("Active") then
+						task.wait()
+						continue
+					end
+
+					Piston:SetAttribute("Active", true)
+					task.wait(5)
+					Piston:SetAttribute("Active", false)
+					task.wait(5)
+				end
+			end),
+
+			true
+		)
 	end
 
 	function State:Start() end
 
 	function State:Update() end
 
-	function State:Exit() end
+	function State:Exit()
+		janitor:Cleanup()
+	end
 
 	return State
 end

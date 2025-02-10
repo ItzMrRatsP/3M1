@@ -39,6 +39,11 @@ return function(StateMachine)
 
 		janitor:Add(
 			zone.playerEntered:Connect(function()
+				task.delay(3, function()
+					SignalWrapper:Get("removePreviousLevel")
+						:Fire("LevelFour")
+				end)
+
 				StateMachine:Transition(StateMachine.LevelFour)
 			end),
 

@@ -82,9 +82,12 @@ return function(StateMachine)
 			self.ConnectionZone = zone.playerEntered:Connect(
 				function(player)
 					StateMachine:Transition(StateMachine.LevelOne)
-					print(
-						("%s entered the zone!"):format(player.Name)
-					)
+					Subtitles.playSubtitle("StartLVLOne", false, 2)
+
+					task.delay(3, function()
+						SignalWrapper:Get("removePreviousLevel")
+							:Fire("LevelOne")
+					end)
 				end
 			)
 		end)

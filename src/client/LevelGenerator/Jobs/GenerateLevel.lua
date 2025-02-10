@@ -14,11 +14,11 @@ local currentLevel = nil
 local nextLevelSpawn = nil
 local currentIndex = 1
 
+local Levels = {} :: { [number]: { Entrance: Model?, Map: Model } }
+
 -- Variables
 local Player = Players.LocalPlayer
 -- local function destroyPreviousLevel() end void
-
-local function OpenDoors() end
 
 local function generateEntrance()
 	-- todo: generate entrance for the current level
@@ -35,6 +35,8 @@ local function generateEntrance()
 	entrance.Parent = workspace
 
 	nextLevelSpawn = entrance:FindFirstChild("NextLevelSpawn")
+
+	return entrance
 end
 
 local function generateLevel()
@@ -46,7 +48,7 @@ local function generateLevel()
 		return
 	end
 
-	local levelConfig = LevelsLUT.Config[LevelsLUT.OrderedIndex[levelIndex]]
+	local levelConfig = LevelsLUT.Config[currentIndex]
 
 	if not levelConfig then
 		warn("No level config")
@@ -56,10 +58,14 @@ local function generateLevel()
 	currentLevel = janitor:Add(levelConfig.Map:Clone())
 	currentLevel.Parent = workspace:FindFirstChild("ActiveMap")
 
+	local Entrance = nil
+
 	if levelConfig.HasEntrance then
 		print("Has entrance, create entrance for the room")
-		generateEntrance()
+		Entrance = generateEntrance()
 	end
+
+	Levels[currentIndex] = { Entrance = Entrance, Map = currentLevel }
 
 	-- Set the CFrame of the level
 	if GameConfig.StartLevel == levelIndex then
@@ -106,5 +112,20 @@ end
 
 return Global.Schedule:Add(function()
 	SignalWrapper:Get("generateLevel"):Connect(generateLevel)
+
+	SignalWrapper:Get("removePreviousLevel"):Connect(function(level: string?)
+		local index = LevelsLUT.OrderedIndex[level]
+
+		-- NO previous level exist
+		if not index then
+			warn("No previous level exist.")
+			return
+		end
+
+		for _, Model in Levels[index - 1] do
+			Model:Destroy()
+		end
+	end)
+
 	generateLevel() -- Intermission level
 end)

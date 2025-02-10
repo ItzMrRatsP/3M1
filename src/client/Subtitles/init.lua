@@ -10,7 +10,7 @@ local janitor = Janitor.new()
 
 local Subtitle = {}
 
-function Subtitle.playSubtitle(Name: string, Yield)
+function Subtitle.playSubtitle(Name: string, Yield, Speed)
 	-- TODO: Play subtitle with the voice
 	local toPlay = EmilySubtitles.Config[Name]
 
@@ -18,7 +18,7 @@ function Subtitle.playSubtitle(Name: string, Yield)
 		return
 	end
 
-	janitor:Add(NewSubtitle(toPlay.Text))
+	janitor:Add(NewSubtitle(toPlay.Text, Speed))
 
 	local Sound: Sound = toPlay.Audio
 	Sound.Volume = 0
@@ -52,7 +52,6 @@ function Subtitle.playSubtitle(Name: string, Yield)
 	if Yield then
 		task.wait(Sound.TimeLength)
 	end
-	
 end
 
 return Subtitle

@@ -107,7 +107,7 @@ function PhysicsGrab:Hold(object)
 	local headAttachment = janitor:Add(Instance.new("Attachment"))
 	headAttachment.Parent = self.Character:FindFirstChild("Head")
 
-	janitor:Add(newBeam(headAttachment, self.Attachment0))
+	janitor:Add(newBeam(self.Attachment0, self.Attachment1))
 
 	janitor:Add(function()
 		self:Unhold()

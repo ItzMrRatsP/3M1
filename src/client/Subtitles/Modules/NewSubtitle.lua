@@ -5,24 +5,26 @@ local Fusion = require(ReplicatedStorage.Packages.Fusion)
 local Scoped = Fusion.scoped(Fusion)
 local Children = Fusion.Children
 
-local function Typewritter(Text, MainText)
+local function Typewritter(Text, MainText, Speed)
+	Speed = Speed or 1
+
 	for letter in utf8.graphemes(Text) do
 		local current = string.sub(Text, letter, letter)
 		MainText:set(Fusion.peek(MainText) .. current)
 
 		if current == "-" or current == "," then
-			task.wait(0.75)
+			task.wait(0.35 / Speed)
 		elseif current == "." then
-			task.wait(0.35)
+			task.wait(0.25 / Speed)
 		end
 
-		task.wait(0.035)
+		task.wait(0.045 / Speed)
 	end
 end
 
-return function(Text: string)
+return function(Text: string, Speed)
 	local OurText = Scoped:Value("")
-	task.spawn(Typewritter, Text, OurText)
+	task.spawn(Typewritter, Text, OurText, Speed)
 
 	return Scoped:New("ScreenGui") {
 		Name = "Subtitles",

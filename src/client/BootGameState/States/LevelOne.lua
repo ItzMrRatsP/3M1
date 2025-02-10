@@ -6,6 +6,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local SignalWrapper = require(ReplicatedStorage.Shared.SignalWrapper)
+local Subtitles = require(ReplicatedStorage.Client.Subtitles)
 local Zones = require(ReplicatedStorage.Shared.Zones)
 
 local ActiveMap = workspace:WaitForChild("ActiveMap")
@@ -54,29 +55,35 @@ return function(StateMachine)
 
 		SignalWrapper:Get("generateLevel"):Fire()
 
-		task.spawn(function()
-			repeat
-				task.wait()
-			until ActiveMap:FindFirstChild("LevelTwo")
+		local zone =
+			Zones.new(ActiveMap["LevelTwo"].LevelRelated.LevelTwoTrigger)
 
-			local zone = Zones.new(
-				ActiveMap["LevelTwo"].LevelRelated.LevelTwoTrigger
-			)
+		local completeZone =
+			Zones.new(ActiveMap["LevelOne"].LevelRelated.CompleteZone)
 
-			janitor:Add(
-				zone.playerEntered:Connect(function(player)
-					-- Disconnect zone first thing
-					janitor:Remove("Zone")
+		janitor:Add(
+			zone.playerEntered:Connect(function(player)
+				-- Transition to LevelTwo
+				StateMachine:Transition(StateMachine.LevelTwo)
 
-					-- Transition to LevelTwo and generate the next level
-					StateMachine:Transition(StateMachine.LevelTwo)
-					SignalWrapper:Get("generateLevel"):Fire()
-				end),
+				-- Generate the next level and remove previousLevel
+				SignalWrapper:Get("removePreviousLevel")
+					:Fire("LevelTwo")
+				SignalWrapper:Get("generateLevel"):Fire()
+			end),
 
-				"Disconnect",
-				"Zone"
-			)
-		end)
+			"Disconnect"
+		)
+
+		janitor:Add(
+			completeZone.playerEntered:Connect(function()
+				Subtitles.playSubtitle("CompleteLVLOne", false, 2)
+				janitor:Remove("CompleteZone")
+			end),
+
+			"Disconnect",
+			"CompleteZone"
+		)
 	end
 
 	function State:Update(dt) end
