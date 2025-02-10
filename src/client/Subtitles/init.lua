@@ -7,11 +7,13 @@ local NewSubtitle = require(script.Modules.NewSubtitle)
 local Promise = require(ReplicatedStorage.Packages.Promise)
 
 local janitor = Janitor.new()
+local currentSound -- Store the currently playing sound
 
 local Subtitle = {}
 
 function Subtitle.playSubtitle(Name: string, Yield, Speed)
-	-- TODO: Play subtitle with the voice
+	janitor:Cleanup()
+
 	local toPlay = EmilySubtitles.Config[Name]
 
 	if not toPlay then
@@ -21,23 +23,31 @@ function Subtitle.playSubtitle(Name: string, Yield, Speed)
 	janitor:Add(NewSubtitle(toPlay.Text, Speed))
 
 	local Sound: Sound = toPlay.Audio
+
+	if currentSound and currentSound.IsPlaying then
+		currentSound:Stop()
+	end
+
+	currentSound = Sound
 	Sound.Volume = 0
 	Sound:Play()
 
-	TweenService
-		:Create(
-			Sound,
-			TweenInfo.new(1, Enum.EasingStyle.Linear),
-			{ Volume = 1 }
-		)
-		:Play()
+	local fadeIn = TweenService:Create(
+		Sound,
+		TweenInfo.new(1, Enum.EasingStyle.Linear),
+		{ Volume = 1 }
+	)
+	fadeIn:Play()
 
 	janitor:Add(function()
-		TweenService:Create(
+		local fadeOut = TweenService:Create(
 			Sound,
 			TweenInfo.new(1, Enum.EasingStyle.Linear),
 			{ Volume = 0 }
-		):Play()
+		)
+		fadeOut:Play()
+		task.wait(1)
+		Sound:Stop()
 	end)
 
 	janitor:AddPromise(Promise.fromEvent(Sound.Ended, function()

@@ -7,6 +7,7 @@ local RunService = game:GetService("RunService")
 local Janitor = require(ReplicatedStorage.Packages.Janitor)
 local SignalWrapper = require(ReplicatedStorage.Shared.SignalWrapper)
 local Zones = require(ReplicatedStorage.Shared.Zones)
+local Subtitles = require(ReplicatedStorage.Client.Subtitles)
 
 local ActiveMap = workspace:WaitForChild("ActiveMap")
 
@@ -20,6 +21,9 @@ return function(StateMachine)
 			true
 		)
 
+		
+		Subtitles.playSubtitle("Emily_LVLTwo_bridge", false)
+
 		SignalWrapper:Get("generateLevel"):Fire()
 
 		local zone =
@@ -27,10 +31,14 @@ return function(StateMachine)
 
 		janitor:Add(
 			zone.playerEntered:Connect(function()
-				task.delay(3, function()
+				task.delay(5, function()
 					SignalWrapper:Get("removePreviousLevel")
 						:Fire("LevelThree")
 				end)
+
+				Subtitles.playSubtitle("Emily_LVLTwo_brain")
+
+				
 
 				StateMachine:Transition(StateMachine.LevelThree)
 			end),

@@ -27,6 +27,8 @@ return function(StateMachine)
 		local LazerPart = LevelRelatedAssets.LazerPart
 		local Beam = LevelRelatedAssets.Beam
 
+		local ActivatedOnce = false
+
 		SlidingDoorEntry:SetAttribute("Locked", true)
 		SlidingDoorEntry:SetAttribute("Active", false)
 
@@ -47,6 +49,12 @@ return function(StateMachine)
 		end)
 
 		DoorButton:GetAttributeChangedSignal("Active"):Connect(function()
+			if not ActivatedOnce and DoorButton:GetAttribute("Active") then
+				ActivatedOnce = true
+				task.delay(2, Subtitles.playSubtitle, "CompleteLVLOne")
+				--Subtitles.playSubtitle("CompleteLVLOne", false, 2)
+			end
+
 			SlidingDoorExit:SetAttribute(
 				"Active",
 				DoorButton:GetAttribute("Active")
@@ -77,7 +85,6 @@ return function(StateMachine)
 
 		janitor:Add(
 			completeZone.playerEntered:Connect(function()
-				Subtitles.playSubtitle("CompleteLVLOne", false, 2)
 				janitor:Remove("CompleteZone")
 			end),
 

@@ -15,11 +15,13 @@ return function(StateMachine)
 	local janitor = Janitor.new()
 
 	function State:Enter()
-		local Level = workspace.ActiveMaps["LevelFive"]
+		local Level = workspace.ActiveMap:WaitForChild("LevelFive")
 
 		local PressureButton = Level.Assets:FindFirstChild("PressureButton")
 		local EntranceDoor = Level.Assets:FindFirstChild("EntryDoor")
 		local ExitDoor = Level.Assets:FindFirstChild("ExitDoor")
+		
+		SignalWrapper:Get("generateLevel"):Fire()
 
 		EntranceDoor:SetAttribute("Locked", true)
 		EntranceDoor:SetAttribute("Active", false)
@@ -33,7 +35,19 @@ return function(StateMachine)
 					)
 				end)
 		)
-	end
+
+		local zone = Zones.new(
+			ActiveMap["LevelSix"].LevelRelated:WaitForChild("EntryZone")
+		)
+
+		janitor:Add(
+			zone.playerEntered:Connect(function()
+				StateMachine:Transition(StateMachine.LevelSix)
+			end),
+
+			"Disconnect"
+		)
+	end	
 
 	function State:Start() end
 

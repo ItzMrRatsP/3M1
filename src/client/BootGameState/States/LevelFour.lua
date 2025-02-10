@@ -30,6 +30,7 @@ return function(StateMachine)
 		local Piston = Level.Assets:FindFirstChild("Piston")
 
 		SignalWrapper:Get("generateLevel"):Fire()
+		Subtitles.playSubtitle("Emily_LVLFour_intro")
 
 		--todo, while pistonButton active, every 2 seconds Piston is activated and deactivated
 		EntryDoor:SetAttribute("Locked", true)
@@ -79,10 +80,6 @@ return function(StateMachine)
 					end)
 						:andThen(function()
 							task.wait(0.25)
-							Subtitles.playSubtitle(
-								"LVLFive_2",
-								true
-							)
 
 							SignalWrapper:Get("SetMainVolume")
 								:Fire(0.5)

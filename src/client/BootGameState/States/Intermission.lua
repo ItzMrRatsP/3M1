@@ -68,7 +68,7 @@ return function(StateMachine)
 			Global.Character.Root.Anchored = false
 
 			task.wait(0.5)
-			Subtitles.playSubtitle("Intro", true)
+			--Subtitles.playSubtitle("Intro", true)
 			task.wait(2)
 			ActiveMap["Intermission"].Assets.SlidingDoor:SetAttribute(
 				"Active",
@@ -84,10 +84,10 @@ return function(StateMachine)
 					StateMachine:Transition(StateMachine.LevelOne)
 					Subtitles.playSubtitle("StartLVLOne", false, 2)
 
-					task.delay(3, function()
-						SignalWrapper:Get("removePreviousLevel")
-							:Fire("LevelOne")
-					end)
+					--task.delay(3, function()
+						--SignalWrapper:Get("removePreviousLevel")
+							--:Fire("LevelOne")
+					--end)
 				end
 			)
 		end)

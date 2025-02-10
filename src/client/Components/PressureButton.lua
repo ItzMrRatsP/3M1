@@ -55,13 +55,6 @@ function PressureButton:Start()
 	end)
 
 	for _, obj in pairs(CollectionService:GetTagged("Heavy")) do
-		if
-			not obj:IsAncestorOf(workspace.ActiveMap)
-			and not obj == Players.LocalPlayer.Character
-		then
-			continue
-		end
-
 		zone:trackItem(obj)
 	end
 

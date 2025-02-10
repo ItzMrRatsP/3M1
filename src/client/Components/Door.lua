@@ -70,9 +70,11 @@ function DoorComponent:Start()
 
 		if distance < 10 and not self.isOpen then
 			self.isOpen = true
+			self.Instance:SetAttribute("Active", true)
 			self:OpenDoor(side1, side2)
 		elseif distance > 12 and self.isOpen then
 			self.isOpen = false
+			self.Instance:SetAttribute("Active", false)
 			self:CloseDoor(side1, side2)
 		end
 	end)
